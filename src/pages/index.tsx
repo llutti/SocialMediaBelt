@@ -10,10 +10,9 @@ const Home: NextPage = () =>
   return (
     <div className={''}>
 
-      <Seo />
+      <Seo title='Social Media Belt' description='Social Media Belt' />
 
       <h1 className='font-bold text-4xl'>HOME</h1>
-
 
       <ul>
         <li><Link href='/app'><a>App</a></Link></li>
