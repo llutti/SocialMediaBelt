@@ -1,3 +1,5 @@
+import Heading1 from '@components/Heading1';
+import Heading2 from '@components/Heading2';
 import { NextPage } from 'next';
 
 const Index: NextPage = () =>
@@ -5,12 +7,9 @@ const Index: NextPage = () =>
 
   return (
     <>
-      <h1 className='text-4xl font-semibold text-gray-800 dark:text-white'>
-        Good afternoom, Charlie
-      </h1>
-      <h2 className='text-md text-gray-400'>
-        Here`s what`s happening with your ambassador account today.
-      </h2>
+      <Heading1>Seja Bem Vindo!</Heading1>
+      <Heading2>Gerenciador de Links</Heading2>
+
       <div className='flex my-6 items-center w-full space-y-4 md:space-x-4 md:space-y-0 flex-col md:flex-row'>
         <div className='w-full md:w-6/12'>
           <div className='shadow-lg w-full bg-white dark:bg-gray-700 relative overflow-hidden'>
