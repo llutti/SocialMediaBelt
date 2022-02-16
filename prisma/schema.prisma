@@ -47,6 +47,7 @@ model User {
   image         String?
   accounts      Account[]
   sessions      Session[]
+  Tenant        Tenant[]
 }
 
 model VerificationToken {
@@ -58,11 +59,14 @@ model VerificationToken {
 }
 
 model Tenant {
-  id    Int    @id @default(autoincrement())
+  id    String @id @default(cuid())
   name  String
   slug  String
   plan  String
   image String
 
   createdAt DateTime @default(now())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
