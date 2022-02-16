@@ -1,9 +1,0 @@
--- CreateTable
-CREATE TABLE "Account" (
-    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    "name" TEXT NOT NULL,
-    "slug" TEXT NOT NULL,
-    "plan" TEXT NOT NULL,
-    "image" TEXT NOT NULL,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
-);
