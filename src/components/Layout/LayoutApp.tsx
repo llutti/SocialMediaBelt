@@ -1,6 +1,10 @@
-import LinkMenu from '@components/LinkMenu';
-import Link from 'next/link';
 import React from 'react';
+import Image from 'next/image'
+import Link from 'next/link';
+
+import LinkMenu from '@components/LinkMenu';
+import { signOut, useSession } from 'next-auth/react';
+import { useRouter } from 'next/router';
 
 interface Props
 {
@@ -9,6 +13,8 @@ interface Props
 
 const LayoutApp = ({ children }: Props) =>
 {
+  const router = useRouter();
+  const { data: session } = useSession();
   return (
     <>
       <main className='bg-gray-100 dark:bg-gray-800 h-screen overflow-hidden relative'>
@@ -100,11 +106,21 @@ const LayoutApp = ({ children }: Props) =>
                   </button>
                   <span className='w-1 h-8 rounded-lg bg-gray-200'>
                   </span>
-                  <a href='#' className='block relative'>
-                    <img alt='profil' src='/images/person/1.jpg' className='mx-auto object-cover rounded-full h-10 w-10 ' />
-                  </a>
-                  <button className='flex items-center text-gray-500 dark:text-white text-md'>
-                    Charlie R
+                  <span className='block relative mx-auto object-cover rounded-full h-10 w-10'>
+                    {
+                      session?.user.image &&
+                      <Image
+                        src={session.user.image}
+                        alt={session.user.name ?? 'Avatar'}
+                        layout='fill'
+                      />
+                    }
+                  </span>
+                  <button
+                    className='flex items-center text-gray-500 dark:text-white text-md'
+                    onClick={() => signOut({ callbackUrl: '/' })}
+                  >
+                    {session?.user.name}
                     <svg width={20} height={20} className='ml-2 text-gray-400' fill='currentColor' viewBox='0 0 1792 1792' xmlns='http://www.w3.org/2000/svg'>
                       <path d='M1408 704q0 26-19 45l-448 448q-19 19-45 19t-45-19l-448-448q-19-19-19-45t19-45 45-19h896q26 0 45 19t19 45z'>
                       </path>

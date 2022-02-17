@@ -6,6 +6,7 @@ import { SessionProvider } from "next-auth/react"
 import { LayoutApp, LayoutPublic, LayoutTenant } from '@components/Layout'
 
 import '../styles/globals.css'
+import LayoutEmpty from '@components/Layout/LayoutEmpty';
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps)
 {
@@ -14,15 +15,20 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps)
 
   let Layout = LayoutPublic;
 
-  if (pathname.startsWith('/app') === true)
+  if (pathname === '/app')
   {
-    Layout = LayoutApp;
+    Layout = LayoutEmpty;
   }
   else
-    if (pathname.startsWith('/[slug]') === true)
+    if (pathname.startsWith('/app') === true)
     {
-      Layout = LayoutTenant;
+      Layout = LayoutApp;
     }
+    else
+      if (pathname.startsWith('/[slug]') === true)
+      {
+        Layout = LayoutTenant;
+      }
 
   return (
     <SessionProvider session={session}>

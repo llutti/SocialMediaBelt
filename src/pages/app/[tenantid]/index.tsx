@@ -1,10 +1,10 @@
+import { NextPage } from 'next';
+
 import Heading1 from '@components/Heading1';
 import Heading2 from '@components/Heading2';
-import { NextPage } from 'next';
 
 const Index: NextPage = () =>
 {
-
   return (
     <>
       <Heading1>Seja Bem Vindo!</Heading1>

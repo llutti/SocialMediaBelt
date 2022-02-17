@@ -15,6 +15,9 @@ export default NextAuth({
   session: {
     strategy: 'jwt'
   },
+  // pages: {
+  //   signOut: '/'
+  // },
   callbacks: {
     // async signIn({ user, account, profile, email, credentials }) {
     //   return true
