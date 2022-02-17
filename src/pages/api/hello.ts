@@ -2,16 +2,12 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 
 import { prisma } from "@lib/prisma";
+import { Account } from '@prisma/client';
 
-type Data = {
-  id: number,
-  name: string,
-  slug: string
-}
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<Data[]>
+  res: NextApiResponse<Account[]>
 )
 {
   const accounts = await prisma?.account.findMany();

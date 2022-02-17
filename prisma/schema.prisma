@@ -40,14 +40,14 @@ model Session {
 }
 
 model User {
-  id            String    @id @default(cuid())
+  id            String           @id @default(cuid())
   name          String?
-  email         String?   @unique
+  email         String?          @unique
   emailVerified DateTime?
   image         String?
   accounts      Account[]
   sessions      Session[]
-  Tenant        Tenant[]
+  tenants       UsersOnTenants[]
 }
 
 model VerificationToken {
@@ -67,6 +67,16 @@ model Tenant {
 
   createdAt DateTime @default(now())
 
-  userId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  users UsersOnTenants[]
+}
+
+model UsersOnTenants {
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tenantId   String
+  tenant     Tenant   @relation(fields: [tenantId], references: [id])
+  assignedAt DateTime @default(now())
+  role       String
+
+  @@id([userId, tenantId])
 }

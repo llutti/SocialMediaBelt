@@ -12,9 +12,6 @@ export default NextAuth({
       clientSecret: process.env.GITHUB_SECRET,
     }),
   ],
-  // jwt:{
-
-  // },
   session: {
     strategy: 'jwt'
   },
@@ -25,21 +22,27 @@ export default NextAuth({
     // async redirect({ url, baseUrl }) {
     //   return baseUrl
     // },
-    // async session({ session, token, user })
-    // {
-    //   return session;
-    // },
+    async session({ session, token, user })
+    {
+      // console.log('session', { session, token, user });
+      session.user.id = token.sub;
+
+      return session;
+    },
     async jwt({ token, user, account, profile, isNewUser })
     {
-      // console.log('jwt callback');
-      // console.log({ user, token, isNewUser });
+      // console.log('jwt', { token, user });
 
       if ((isNewUser === true)
         && (user?.id))
       {
         const tenant = await prisma.tenant.findFirst({
           where: {
-            userId: user.id
+            users: {
+              some: {
+                userId: user.id
+              }
+            }
           }
         });
 
@@ -48,10 +51,21 @@ export default NextAuth({
           await prisma.tenant.create({
             data: {
               name: 'Meu Tenant',
-              userId: user.id,
               image: '',
               slug: 'meutenant',
               plan: 'free',
+              users: {
+                create: [
+                  {
+                    role: '',
+                    user: {
+                      connect: {
+                        id: user.id
+                      }
+                    }
+                  }
+                ]
+              }
             }
           })
         }
