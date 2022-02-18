@@ -12,16 +12,20 @@ export default async function handler(
 {
   const session = await getSession({ req });
 
-  const tenants = await prisma.tenant.findMany({
-    where: {
-      users: {
-        some: {
-          userId: session?.user.id ?? undefined
+  if (session)
+  {
+    const tenants = await prisma.tenant.findMany({
+      where: {
+        users: {
+          some: {
+            userId: session?.user.id ?? undefined
+          }
         }
       }
-    }
-  });
+    });
 
-  res.status(200).json(tenants)
-
+    res.status(200).json(tenants)
+    return
+  }
+  res.status(200).json([]);
 }

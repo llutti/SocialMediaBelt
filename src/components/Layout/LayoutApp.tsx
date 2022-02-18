@@ -15,6 +15,7 @@ const LayoutApp = ({ children }: Props) =>
 {
   const router = useRouter();
   const { data: session } = useSession();
+
   return (
     <>
       <main className='bg-gray-100 dark:bg-gray-800 h-screen overflow-hidden relative'>
@@ -28,7 +29,7 @@ const LayoutApp = ({ children }: Props) =>
               </div>
               <nav className='mt-6'>
                 <div>
-                  <LinkMenu href='/app'>
+                  <LinkMenu href={`/app/${router?.query?.tenantId}`}>
                     <span className='text-left'>
                       <svg width={20} height={20} fill='currentColor' viewBox='0 0 1792 1792' xmlns='http://www.w3.org/2000/svg'>
                         <path d='M1472 992v480q0 26-19 45t-45 19h-384v-384h-256v384h-384q-26 0-45-19t-19-45v-480q0-1 .5-3t.5-3l575-474 575 474q1 2 1 6zm223-69l-62 74q-8 9-21 11h-3q-13 0-21-7l-692-577-692 577q-12 8-24 7-13-2-21-11l-62-74q-8-10-7-23.5t11-21.5l719-599q32-26 76-26t76 26l244 204v-195q0-14 9-23t23-9h192q14 0 23 9t9 23v408l219 182q10 8 11 21.5t-7 23.5z'>
@@ -39,7 +40,7 @@ const LayoutApp = ({ children }: Props) =>
                       Home
                     </span>
                   </LinkMenu>
-                  <a className='w-full text-gray-400 flex items-center pl-6 p-2 my-2 transition-colors duration-200 justify-start hover:text-gray-800 border-l-4 border-transparent' href='#'>
+                  <LinkMenu href={`/app/${router?.query?.tenantId}`}>
                     <span className='text-left'>
                       <svg width={20} height={20} fill='currentColor' viewBox='0 0 2048 1792' xmlns='http://www.w3.org/2000/svg'>
                         <path d='M1070 1178l306-564h-654l-306 564h654zm722-282q0 182-71 348t-191 286-286 191-348 71-348-71-286-191-191-286-71-348 71-348 191-286 286-191 348-71 348 71 286 191 191 286 71 348z'>
@@ -52,8 +53,8 @@ const LayoutApp = ({ children }: Props) =>
                         0
                       </span>
                     </span>
-                  </a>
-                  <LinkMenu href='/app/links'>
+                  </LinkMenu>
+                  <LinkMenu href={`/app/${router?.query?.tenantId}/links`}>
                     <span className='text-left'>
                       <svg width={20} height={20} fill='currentColor' viewBox='0 0 1792 1792' xmlns='http://www.w3.org/2000/svg'>
                         <path d='M1728 608v704q0 92-66 158t-158 66h-1216q-92 0-158-66t-66-158v-960q0-92 66-158t158-66h320q92 0 158 66t66 158v32h672q92 0 158 66t66 158z'>

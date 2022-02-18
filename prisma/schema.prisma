@@ -68,6 +68,7 @@ model Tenant {
   createdAt DateTime @default(now())
 
   users UsersOnTenants[]
+  links Link[]
 }
 
 model UsersOnTenants {
@@ -79,4 +80,16 @@ model UsersOnTenants {
   role       String
 
   @@id([userId, tenantId])
+}
+
+model Link {
+  id          String @id @default(cuid())
+  name        String
+  publicName  String
+  slug        String
+  destination String
+
+  createdAt DateTime @default(now())
+  tenantId  String
+  tenant    Tenant   @relation(fields: [tenantId], references: [id])
 }
