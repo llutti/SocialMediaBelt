@@ -4,10 +4,11 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from "yup";
 import { useRouter } from 'next/router';
-import { Link } from '@prisma/client';
+import { Link as LinkEntity } from '@prisma/client';
 import { useHttpGet } from 'src/hooks/api';
 import { executeDelete, executePost } from '@lib/fetch';
 import Alert from '@components/Alert';
+import Link from 'next/link';
 
 interface NewLinkForm
 {
@@ -29,8 +30,10 @@ const schema = yup.object(
 
 const Links = () =>
 {
+
   const router = useRouter();
-  const { data, mutate } = useHttpGet<Link[]>(`/api/${router?.query?.tenantId}/links`);
+  const cursor = router?.query?.cursor ? `?cursor=${router?.query?.cursor}` : '';
+  const { data, mutate } = useHttpGet(router?.query?.tenantId &&`/api/${router?.query?.tenantId}/links${cursor}`);
   const { register, handleSubmit, formState: { errors } } = useForm<NewLinkForm>({ resolver: yupResolver(schema) });
   const onSubmit: SubmitHandler<NewLinkForm> = async (inputs) =>
   {
@@ -145,7 +148,7 @@ const Links = () =>
       </form>
 
       {
-        (data && data.length === 0) ?
+        (data && data?.items?.length === 0) ?
           (
             <Alert>Nenhum link cadastrado.</Alert>
           )
@@ -186,9 +189,9 @@ const Links = () =>
                       </thead>
                       <tbody>
                         {
-                          data &&
-                          data.map(
-                            link =>
+                          data?.items &&
+                          data?.items.map(
+                            (link: LinkEntity) =>
                             {
                               return (
                                 <tr key={link.id}>
@@ -233,26 +236,22 @@ const Links = () =>
                     </table>
                     <div className="px-5 bg-white py-5 flex flex-col xs:flex-row items-center xs:justify-between">
                       <div className="flex items-center">
-                        <button type="button" className="w-full p-4 border text-base rounded-l-xl text-gray-600 bg-white hover:bg-gray-100">
-                          <svg width="9" fill="currentColor" height="8" className="" viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M1427 301l-531 531 531 531q19 19 19 45t-19 45l-166 166q-19 19-45 19t-45-19l-742-742q-19-19-19-45t19-45l742-742q19-19 45-19t45 19l166 166q19 19 19 45t-19 45z">
-                            </path>
-                          </svg>
-                        </button>
-                        <button type="button" className="w-full px-4 py-2 border-t border-b text-base text-indigo-500 bg-white hover:bg-gray-100 "> 1
-                        </button>
-                        <button type="button" className="w-full px-4 py-2 border text-base text-gray-600 bg-white hover:bg-gray-100"> 2
-                        </button>
-                        <button type="button" className="w-full px-4 py-2 border-t border-b text-base text-gray-600 bg-white hover:bg-gray-100"> 3
-                        </button>
-                        <button type="button" className="w-full px-4 py-2 border text-base text-gray-600 bg-white hover:bg-gray-100"> 4
-                        </button>
-                        <button type="button" className="w-full p-4 border-t border-b border-r text-base  rounded-r-xl text-gray-600 bg-white hover:bg-gray-100">
-                          <svg width="9" fill="currentColor" height="8" className="" viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M1363 877l-742 742q-19 19-45 19t-45-19l-166-166q-19-19-19-45t19-45l531-531-531-531q-19-19-19-45t19-45l166-166q19-19 45-19t45 19l742 742q19 19 19 45t-19 45z">
-                            </path>
-                          </svg>
-                        </button>
+                        <Link href={`/app/${router?.query?.tenantId}/links?cursor=${data?.items[0]?.id}`} passHref={true}>
+                          <button type="button" className="w-full p-4 border text-base rounded-l-xl text-gray-600 bg-white hover:bg-gray-100">
+                            <svg width="9" fill="currentColor" height="8" className="" viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg">
+                              <path d="M1427 301l-531 531 531 531q19 19 19 45t-19 45l-166 166q-19 19-45 19t-45-19l-742-742q-19-19-19-45t19-45l742-742q19-19 45-19t45 19l166 166q19 19 19 45t-19 45z">
+                              </path>
+                            </svg>
+                          </button>
+                        </Link>
+                        <Link href={`/app/${router?.query?.tenantId}/links?cursor=${data?.items[data?.items?.length - 1]?.id}`} passHref={true}>
+                          <button type="button" className="w-full p-4 border-t border-b border-r text-base  rounded-r-xl text-gray-600 bg-white hover:bg-gray-100">
+                            <svg width="9" fill="currentColor" height="8" className="" viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg">
+                              <path d="M1363 877l-742 742q-19 19-45 19t-45-19l-166-166q-19-19-19-45t19-45l531-531-531-531q-19-19-19-45t19-45l166-166q19-19 45-19t45 19l742 742q19 19 19 45t-19 45z">
+                              </path>
+                            </svg>
+                          </button>
+                        </Link>
                       </div>
                     </div>
                   </div>
