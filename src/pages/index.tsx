@@ -20,7 +20,7 @@ const Home: NextPage = () =>
       <ul>
         <li><Link href='/app'><a>App</a></Link></li>
         <li><Link href='/llutti'><a>Tenant Llutti</a></Link></li>
-        <li><button onClick={() => signIn('github', { callbackUrl: '/app' })}>Sign in</button></li>
+        <li><button onClick={() => signIn(undefined, { callbackUrl: '/app' })}>Sign in</button></li>
         <li>Signed in as {session?.user?.email} <br /></li>
         <li><button onClick={() => signOut()}>Sign out</button></li>
       </ul>
