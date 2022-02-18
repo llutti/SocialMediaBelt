@@ -3,7 +3,7 @@ import Image from 'next/image'
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import useSWR from 'swr';
+import { useHttpGet } from 'src/hooks/api';
 
 // @ts-ignore
 const fetcher = (...args: any[]) => fetch(...args).then(res => res.json())
@@ -12,7 +12,7 @@ const IndexApp = () =>
 {
   const router = useRouter();
   const [shouldRedirect, setShouldRedirect] = useState(false);
-  const { data, error } = useSWR('/api/tenants', fetcher);
+  const { data } = useHttpGet('/api/tenants');
   const { data: session } = useSession();
 
   useEffect(() =>

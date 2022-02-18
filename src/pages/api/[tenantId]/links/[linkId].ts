@@ -5,9 +5,15 @@ import { prisma } from "@lib/prisma";
 import { getSession } from 'next-auth/react';
 import { Link, Prisma } from '@prisma/client';
 
+interface returnData
+{
+  success: boolean;
+  id?: string;
+}
+
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<Link | Link[] | null>
+  res: NextApiResponse<returnData>
 )
 {
   const session = await getSession({ req });
@@ -15,20 +21,10 @@ export default async function handler(
   if (session)
   {
     const tenantId = req.query.tenantId as string;
-    if (req.method === 'POST')
-    {
-      const linkData: Prisma.LinkCreateInput = {
-        name: req.body.name,
-        publicName: req.body.publicName,
-        slug: req.body.slug,
-        destination: req.body.destination,
-        tenant: {
-          connect: {
-            id: tenantId
-          }
-        }
-      }
+    const linkId = req.query.linkId as string;
 
+    if (req.method === 'DELETE')
+    {
       // TODO: Checar se tenho acesso ao tenant
       const tenants = await prisma.tenant
         .findMany({
@@ -41,26 +37,16 @@ export default async function handler(
           }
         });
 
-      const savedLink = await prisma.link
-        .create({
-          data: linkData
-        })
-      res.status(200).json(savedLink)
-      return
-    }
-
-    if (req.method === 'GET')
-    {
-      const links = await prisma.link
-        .findMany({
+      await prisma.link
+        .delete({
           where: {
-            tenantId: tenantId
+            id: linkId
           }
         });
 
-      res.status(200).json(links)
+      res.status(200).json({ success: true, id: linkId });
       return
     }
   }
-  res.status(400).json(null);
+  res.status(400).json({ success: false });
 }
