@@ -1,13 +1,18 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 
-import { prisma } from "@lib/prisma";
 import { getSession } from 'next-auth/react';
 import { Link, Prisma } from '@prisma/client';
 import { findPaginated, LinkPaginationWapper, save } from 'src/services/links';
+import { checkTenantPermition } from 'src/services/users';
+
+interface SessionError
+{
+  message?: string
+}
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<Link | LinkPaginationWapper | null>
+  res: NextApiResponse<Link | LinkPaginationWapper | SessionError | null>
 )
 {
   const session = await getSession({ req });
@@ -15,6 +20,16 @@ export default async function handler(
   if (session)
   {
     const tenantId = req.query.tenantId as string;
+    const tenant = await checkTenantPermition(tenantId, session?.user?.id);
+    if (!tenant)
+    {
+      res.status(404).json({
+        message: 'Need to be auth'
+      });
+
+      return;
+    }
+
     if (req.method === 'POST')
     {
       const linkData: Prisma.LinkCreateInput = {
@@ -28,19 +43,6 @@ export default async function handler(
           }
         }
       }
-
-      // TODO: Checar se tenho acesso ao tenant
-      const tenants = await prisma.tenant
-        .findMany({
-          where: {
-            users: {
-              some: {
-                userId: session?.user.id ?? undefined
-              }
-            }
-          }
-        });
-
       const savedLink = await save(linkData);
 
       res.status(200).json(savedLink);

@@ -41,36 +41,45 @@ const findPaginated = async (tenantId: string, cursor?: string | string[], take?
   }
 
   const links = await prisma.link.findMany(args);
-  const nextLink = await prisma.link
-    .findFirst(
-      {
+  let nextLink: { id: string; } | null = null;
+  if (links.length > 0)
+  {
+    nextLink = await prisma.link
+      .findFirst(
+        {
+          select: {
+            id: true
+          },
+          where: {
+            id: {
+              gt: links[links.length - 1]?.id
+            }
+          },
+          orderBy: {
+            id: 'asc'
+          }
+        });
+  }
+
+  let prevLink: { id: string; }[] | null = null;
+  if (links.length > 0)
+  {
+    prevLink = await prisma.link
+      .findMany({
         select: {
           id: true
         },
         where: {
           id: {
-            gt: links[links.length - 1]?.id
+            lt: links[0]?.id
           }
         },
         orderBy: {
-          id: 'asc'
-        }
+          id: 'desc'
+        },
+        take: takeNumber
       });
-  const prevLink = await prisma.link
-    .findMany({
-      select: {
-        id: true
-      },
-      where: {
-        id: {
-          lt: links[0]?.id
-        }
-      },
-      orderBy: {
-        id: 'desc'
-      },
-      take: takeNumber
-    });
+  }
 
   return {
     items: links,

@@ -3,7 +3,12 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 
 import { prisma } from "@lib/prisma";
 import { getSession } from 'next-auth/react';
-import { Link, Prisma } from '@prisma/client';
+import { checkTenantPermition } from 'src/services/users';
+
+interface SessionError
+{
+  message?: string
+}
 
 interface returnData
 {
@@ -13,29 +18,44 @@ interface returnData
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<returnData>
+  res: NextApiResponse<returnData | SessionError>
 )
 {
   const session = await getSession({ req });
 
   if (session)
   {
-    const tenantId = req.query.tenantId as string;
+    const tenantId = String(req.query.tenantId);
+    const tenant = await checkTenantPermition(tenantId, session?.user?.id);
+    if (!tenant)
+    {
+      res.status(404)
+      .json({
+        message: 'Needs to be auth'
+      });
+
+      return;
+    }
     const linkId = req.query.linkId as string;
 
     if (req.method === 'DELETE')
     {
-      // TODO: Checar se tenho acesso ao tenant
-      const tenants = await prisma.tenant
-        .findMany({
-          where: {
-            users: {
-              some: {
-                userId: session?.user.id ?? undefined
-              }
-            }
-          }
+      const link = await prisma.link.findFirst({
+        where: {
+          id: linkId,
+          tenantId
+        }
+      });
+
+      if (!link)
+      {
+        res.status(404)
+        .json({
+          message: 'Needs to be auth'
         });
+
+        return;
+      }
 
       await prisma.link
         .delete({
