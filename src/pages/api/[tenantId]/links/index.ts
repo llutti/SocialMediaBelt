@@ -1,17 +1,9 @@
-// Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next'
 
 import { prisma } from "@lib/prisma";
 import { getSession } from 'next-auth/react';
 import { Link, Prisma } from '@prisma/client';
-import { json } from 'stream/consumers';
-import { cursorTo } from 'readline';
-
-type LinkPaginationWapper = {
-  cursor?: string,
-  take?: number,
-  items: Link[],
-}
+import { findPaginated, LinkPaginationWapper, save } from 'src/services/links';
 
 export default async function handler(
   req: NextApiRequest,
@@ -49,42 +41,26 @@ export default async function handler(
           }
         });
 
-      const savedLink = await prisma.link
-        .create({
-          data: linkData
-        })
-      res.status(200).json(savedLink)
-      return
+      const savedLink = await save(linkData);
+
+      res.status(200).json(savedLink);
+
+      return;
     }
 
     if (req.method === 'GET')
     {
-      const { cursor: queryCursor, take: queryTake } = req.query;
+      const { cursor, take } = req.query;
+      const links = await findPaginated(tenantId, cursor, take);
 
-      const cursor = queryCursor ? { id: queryCursor as string } : undefined;
-      const take = Number(queryTake ?? 5);
-
-      const links = await prisma.link
-        .findMany({
-          take,
-          skip: cursor ? 1 : 0,
-          where: {
-            tenantId: tenantId
-          },
-          cursor,
-          orderBy: {
-            id: 'asc'
-          }
+      res.status(200)
+        .json({
+          items: links.items,
+          nextCursor: links.nextCursor,
+          prevCursor: links.prevCursor,
         });
 
-
-      // http://localhost:3000/api/ckzpwyhpv002610wg0tif21e1/links?take=2&cursor=ckzsimd6z06292kwgm0ov6ze3
-      res.status(200).json({
-        cursor: cursor?.id,
-        take,
-        items: links
-      })
-      return
+      return;
     }
   }
   res.status(400).json(null);
