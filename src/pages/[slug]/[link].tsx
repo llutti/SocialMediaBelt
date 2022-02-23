@@ -16,11 +16,16 @@ export default GoPage;
 
 export const getServerSideProps: GetServerSideProps = async (context) =>
 {
-  const tenant = await findTenantBySlug(String(context?.params?.slug));
-  if (!tenant)
+  const slug = context?.params?.slug;
+  let tenant = null;
+  if (slug?.indexOf('.') === -1)
   {
-    return {
-      notFound: true,
+    tenant = await findTenantBySlug(String(context?.params?.slug));
+    if (!tenant)
+    {
+      return {
+        notFound: true,
+      }
     }
   }
 
@@ -40,6 +45,7 @@ export const getServerSideProps: GetServerSideProps = async (context) =>
 
   return {
     props: {
+      message:'O REDIRECT ESTÁ DESATIVADO PARA FACITAR OS TESTES',
       ...context?.params,
       tenant,
       link
