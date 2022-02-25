@@ -28,6 +28,9 @@
       ],
       "@lib/*": [
         "src/lib/*"
+      ],
+      "@services/*": [
+        "src/services/*"
       ]
     }
   },
