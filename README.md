@@ -1,34 +1,37 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Social Media Belt
 
-## Getting Started
+Gerenciador de links
 
-First, run the development server:
+### Objetivos do projeto
+- Criar um projeto SaaS (Software como serviço) implementando a arquitetura multitenant.
+- Gerenciar os links
+- Agrupar os links
+- Encurtar um link
 
-```bash
-npm run dev
-# or
-yarn dev
-```
+### Pré-requisitos:
+- [NodeJS](https://www.nodejs.org) (versão 14 ou superior)
+- [NPM](https://www.nodejs.org) ou [YARN](https://classic.yarnpkg.com/)
+- Editor de código ([Visual Studio Code](https://code.visualstudio.com/), por exemplo)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Construído com:
+* [NodeJS](https://www.nodejs.org)
+* [NextJS](https://nextjs.org/) - React Framework.
+* [TailwindCSS](https://tailwindcss.com/) - Um CSS framework para rápida contrução de interfaces customizadas.
+* [NextAuth.js](https://next-auth.js.org/) - Frameword para autenticação em projetos NextJS
+* [Prima](https://www.prisma.io/) - ORM
+* [SWR](https://swr.vercel.app/) - Biblioteca para busca de dados (React Hooks)
+* [React Hook Form](https://react-hook-form.com/) - Gerenciador de formulários
+* [Yup](https://github.com/jquense/yup) - Parser e Validador de formulários
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+## Author:
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+* **Luciano Cargnelutti** - [LinkedIn](https://www.linkedin.com/in/llutti/)
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
 
-## Learn More
+## Licença
 
-To learn more about Next.js, take a look at the following resources:
+Este projeto é licenciado sobre a licença MIT - veja [LICENSE.md](LICENSE.md) para mais informações.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Acknowledgments
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+* Projeto desenvolvido durante o **D30** do [DevPleno](https://devpleno.com) através do canal do [youtube](https://www.youtube.com/devplenod30).
