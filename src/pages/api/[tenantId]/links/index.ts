@@ -23,9 +23,9 @@ export default async function handler(
     const tenant = await checkTenantPermition(tenantId, session?.user?.id);
     if (!tenant)
     {
-      res.status(404).json({
-        message: 'Need to be auth'
-      });
+      res
+        .status(404)
+        .json({ message: 'You need be auth.' });
 
       return;
     }
@@ -65,5 +65,9 @@ export default async function handler(
       return;
     }
   }
-  res.status(400).json(null);
+
+  res
+  .status(404)
+  .json({ message: 'You need be auth.' });
+
 }

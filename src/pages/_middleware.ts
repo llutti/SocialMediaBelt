@@ -10,7 +10,7 @@ export function middleware(req: NextRequest, ev: NextFetchEvent)
     && (pathname.startsWith('/api') === false))
   {
     let slug = hostname;
-    if (hostname.indexOf('socialmediabel.com') !== -1)
+    if (hostname.indexOf('.socialmediabel.com') !== -1)
     {
       slug = hostname.split('.')[0];
     }

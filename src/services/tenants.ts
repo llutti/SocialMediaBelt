@@ -1,4 +1,20 @@
+import { Prisma, Tenant } from '@prisma/client';
+
 import { prisma } from "@lib/prisma";
+
+
+const save = async (id: string, newData: Prisma.TenantUpdateInput): Promise<Tenant> =>
+{
+  const saved = await prisma.tenant
+    .update({
+      where: {
+        id
+      },
+      data: newData
+    });
+
+  return saved;
+}
 
 const findTenantBySlug = async (slug: string) =>
 {
@@ -16,4 +32,4 @@ const findTenantBySlug = async (slug: string) =>
   return tenant;
 }
 
-export { findTenantBySlug }
+export { findTenantBySlug, save }
