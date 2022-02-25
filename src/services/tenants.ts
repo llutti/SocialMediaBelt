@@ -3,6 +3,16 @@ import { Prisma, Tenant } from '@prisma/client';
 import { prisma } from "@lib/prisma";
 
 
+const create = async (newData: Prisma.TenantCreateInput): Promise<Tenant> =>
+{
+  const saved = await prisma.tenant
+    .create({
+      data: newData
+    });
+
+  return saved;
+}
+
 const save = async (id: string, newData: Prisma.TenantUpdateInput): Promise<Tenant> =>
 {
   const saved = await prisma.tenant
@@ -32,4 +42,4 @@ const findTenantBySlug = async (slug: string) =>
   return tenant;
 }
 
-export { findTenantBySlug, save }
+export { create, findTenantBySlug, save }

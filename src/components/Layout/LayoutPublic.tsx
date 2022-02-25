@@ -9,7 +9,7 @@ const LayoutPublic = ({ children }: Props) =>
 {
   return (
     <>
-      <h1>Layout APP</h1>
+      <h1>Layout Public</h1>
       {children}
     </>
   )
