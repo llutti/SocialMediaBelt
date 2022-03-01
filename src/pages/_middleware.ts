@@ -12,7 +12,8 @@ export function middleware(req: NextRequest, ev: NextFetchEvent)
   {
     let slug = hostname.split(':')[0]?.trim();
 
-    if (hostname.indexOf('.socialmediabel.com') !== -1)
+    if ((hostname.indexOf('.socialmediabel.com') !== -1)
+      || (hostname.indexOf('.smb-local') !== -1))
     {
       slug = hostname.split('.')[0];
     }
@@ -25,6 +26,10 @@ export function middleware(req: NextRequest, ev: NextFetchEvent)
 
     url.pathname = `/${slug}${pathname}`;
 
-    // return NextResponse.rewrite(url);
+    if ((hostname !== 'localhost:3000')
+      && (hostname !== 'localhost'))
+    {
+      return NextResponse.rewrite(url);
+    }
   }
 }
