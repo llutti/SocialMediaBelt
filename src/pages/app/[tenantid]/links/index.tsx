@@ -15,11 +15,12 @@ const Links = () =>
 {
   const router = useRouter();
   const cursor = router?.query?.cursor ? `?cursor=${router?.query?.cursor}` : '';
-  const { data, mutate } = useHttpGet(router?.query?.tenantId && `/api/${router?.query?.tenantId}/links${cursor}`);
+  const tenantId = String(router?.query?.tenantid);
+  const { data, mutate } = useHttpGet(tenantId && `/api/${tenantId}/links${cursor}`);
 
   const deleteLink = async (id: string) =>
   {
-    await executeDelete({ url: `/api/${router?.query?.tenantId}/links/${id}` });
+    await executeDelete({ url: `/api/${tenantId}/links/${id}` });
     await mutate();
   }
 
@@ -31,12 +32,12 @@ const Links = () =>
       {
         if (data?.items?.length === 0)
         {
-          router.push(`/app/${router?.query?.tenantId}/links`);
+          router.push(`/app/${tenantId}/links`);
         }
       }
     }
 
-  }, [data, router])
+  }, [tenantId, data, router])
   return (
     <>
       {/* <pre>{JSON.stringify(data, null, 2)}</pre> */}
@@ -46,7 +47,7 @@ const Links = () =>
           <Heading2>Gerenciador de Links</Heading2>
         </div>
         <div className="flex items-center">
-          <Link href={`/app/${router?.query?.tenantId}/links/create`} passHref={true}>
+          <Link href={`/app/${tenantId}/links/create`} passHref={true}>
             <button
               type="button"
               className="w-full border-l border-t border-b text-base font-medium rounded-l-md text-black bg-white hover:bg-gray-100 px-4 py-2"
@@ -149,7 +150,7 @@ const Links = () =>
                     </table>
                     <div className="px-5 bg-white py-5 flex flex-col xs:flex-row items-center xs:justify-between">
                       <div className="flex items-center">
-                        <Link href={`/app/${router?.query?.tenantId}/links?cursor=${data?.prevCursor}`} passHref={true}>
+                        <Link href={`/app/${tenantId}/links?cursor=${data?.prevCursor}`} passHref={true}>
                           <button
                             type="button"
                             className="w-full p-4 border text-base rounded-l-xl text-gray-600 bg-white hover:bg-gray-100"
@@ -161,7 +162,7 @@ const Links = () =>
                             </svg>
                           </button>
                         </Link>
-                        <Link href={`/app/${router?.query?.tenantId}/links?cursor=${data?.nextCursor}`} passHref={true}>
+                        <Link href={`/app/${tenantId}/links?cursor=${data?.nextCursor}`} passHref={true}>
                           <button
                             type="button"
                             className="w-full p-4 border-t border-b border-r text-base  rounded-r-xl text-gray-600 bg-white hover:bg-gray-100"

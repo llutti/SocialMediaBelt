@@ -17,7 +17,7 @@ const Tenants = () =>
 
   const deleteLink = async (id: string) =>
   {
-    await executeDelete({ url: `/api/${router?.query?.tenantId}/links/${id}` });
+    await executeDelete({ url: `/api/${router?.query?.tenantid}/links/${id}` });
     await mutate();
   }
 
@@ -29,7 +29,7 @@ const Tenants = () =>
       {
         if (data?.items?.length === 0)
         {
-          router.push(`/app/${router?.query?.tenantId}/links`);
+          router.push(`/app/${router?.query?.tenantid}/links`);
         }
       }
     }

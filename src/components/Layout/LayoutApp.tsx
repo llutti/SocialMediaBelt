@@ -15,6 +15,7 @@ const LayoutApp = ({ children }: Props) =>
 {
   const router = useRouter();
   const { data: session } = useSession();
+  const tenantId = String(router?.query?.tenantid) ?? null;
 
   return (
     <>
@@ -29,7 +30,7 @@ const LayoutApp = ({ children }: Props) =>
               </div>
               <nav className='mt-6'>
                 <div>
-                  <LinkMenu href={`/app/${router?.query?.tenantId}`}>
+                  <LinkMenu href={`/app/${tenantId}`}>
                     <span className='text-left'>
                       <svg width={20} height={20} fill='currentColor' viewBox='0 0 1792 1792' xmlns='http://www.w3.org/2000/svg'>
                         <path d='M1472 992v480q0 26-19 45t-45 19h-384v-384h-256v384h-384q-26 0-45-19t-19-45v-480q0-1 .5-3t.5-3l575-474 575 474q1 2 1 6zm223-69l-62 74q-8 9-21 11h-3q-13 0-21-7l-692-577-692 577q-12 8-24 7-13-2-21-11l-62-74q-8-10-7-23.5t11-21.5l719-599q32-26 76-26t76 26l244 204v-195q0-14 9-23t23-9h192q14 0 23 9t9 23v408l219 182q10 8 11 21.5t-7 23.5z'>
@@ -40,7 +41,7 @@ const LayoutApp = ({ children }: Props) =>
                       Home
                     </span>
                   </LinkMenu>
-                  <LinkMenu href={`/app/${router?.query?.tenantId}`}>
+                  <LinkMenu href={`/app/${tenantId}`}>
                     <span className='text-left'>
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
@@ -53,7 +54,7 @@ const LayoutApp = ({ children }: Props) =>
                       </span>
                     </span>
                   </LinkMenu>
-                  <LinkMenu href={`/app/${router?.query?.tenantId}/links`}>
+                  <LinkMenu href={`/app/${tenantId}/links`}>
                     <span className='text-left'>
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
@@ -63,7 +64,7 @@ const LayoutApp = ({ children }: Props) =>
                       Links
                     </span>
                   </LinkMenu>
-                  <LinkMenu href={`/app/${router?.query?.tenantId}/settings`}>
+                  <LinkMenu href={`/app/${tenantId}/settings`}>
                     <span className='text-left'>
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />

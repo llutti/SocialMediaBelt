@@ -31,8 +31,8 @@ const CreateLink = () =>
   const { register, handleSubmit, formState: { errors } } = useForm<NewLinkForm>({ resolver: yupResolver(schema) });
   const onSubmit: SubmitHandler<NewLinkForm> = async (inputs) =>
   {
-    await executePost({ url: `/api/${router?.query?.tenantId}/links`, data: inputs });
-    router.push(`/app/${router?.query?.tenantId}/links`);
+    await executePost({ url: `/api/${router?.query?.tenantid}/links`, data: inputs });
+    router.push(`/app/${router?.query?.tenantid}/links`);
   }
 
   return (
@@ -44,7 +44,7 @@ const CreateLink = () =>
           <Heading2>Gerenciador de Links</Heading2>
         </div>
         <div className="flex items-center">
-          <Link href={`/app/${router?.query?.tenantId}/links/create`} passHref={true}>
+          <Link href={`/app/${router?.query?.tenantid}/links/create`} passHref={true}>
             <button
               type="button"
               className="w-full border-l border-t border-b text-base font-medium rounded-l-md text-black bg-white hover:bg-gray-100 px-4 py-2"

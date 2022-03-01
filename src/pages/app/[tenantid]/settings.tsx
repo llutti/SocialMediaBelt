@@ -25,7 +25,7 @@ const Settings = () =>
   const { register, handleSubmit, formState: { errors } } = useForm<TenantSettingsForm>({ resolver: yupResolver(schema) });
   const onSubmit: SubmitHandler<TenantSettingsForm> = async (inputs) =>
   {
-    await executePost({ url: `/api/${router?.query?.tenantId}/settings`, data: inputs });
+    await executePost({ url: `/api/${router?.query?.tenantid}/settings`, data: inputs });
   }
 
   return (
