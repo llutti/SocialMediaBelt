@@ -131,16 +131,18 @@ const Links = () =>
                                     <span className="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight">
                                       <span aria-hidden="true" className="absolute inset-0 bg-green-200 opacity-50 rounded-full">
                                       </span>
-                                      <span className="relative">{link?.clicks}
-                                      </span>
+                                      <Link href={`/app/${tenantId}/links/${link.id}/analitycs`} passHref={true}>
+                                        <a className="relative">
+                                          {link?.clicks}
+                                        </a>
+                                      </Link>
                                     </span>
                                   </td>
                                   <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                                     <span className="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight">
                                       <span aria-hidden="true" className="absolute inset-0 bg-green-200 opacity-50 rounded-full">
                                       </span>
-                                      <span className="relative"> active
-                                      </span>
+                                      <span className="relative"> active </span>
                                     </span>
                                   </td>
                                   <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">

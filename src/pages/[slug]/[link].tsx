@@ -39,11 +39,11 @@ export const getServerSideProps: GetServerSideProps = async (context) =>
 
   // Counting Clicks
 
-  const clicks = await prisma
+  await prisma
     .click
     .create({
       data: {
-        metadata: JSON.stringify(context.req.headers),
+        metadata: JSON.stringify({ headers: context.req.headers }),
         link: {
           connect: {
             id: link.id,

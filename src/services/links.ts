@@ -1,9 +1,15 @@
-import { Link, Prisma } from '@prisma/client';
+import { Click, Link, Prisma } from '@prisma/client';
 import { prisma } from "@lib/prisma";
 
 interface LinkPaginationWapper
 {
   items: Link[],
+  nextCursor?: string,
+  prevCursor?: string,
+}
+interface ClickPaginationWapper
+{
+  items: Click[],
   nextCursor?: string,
   prevCursor?: string,
 }
@@ -109,6 +115,76 @@ const findPaginated = async (tenantId: string, cursor?: string | string[], take?
   }
 }
 
+const findAnalitycsPaginated = async (linkId: string, cursor?: string | string[], take?: string | string[]): Promise<ClickPaginationWapper> =>
+{
+  const takeNumber = Number(take || 5);
+  const args: Prisma.ClickFindManyArgs = {
+    where: {
+      linkId: {
+        equals: linkId
+      }
+    },
+    take: takeNumber,
+    orderBy: {
+      id: 'asc'
+    }
+  }
+  if (cursor)
+  {
+    args.cursor = {
+      id: String(cursor)
+    }
+  }
+
+  const clicks = await prisma.click.findMany(args);
+  let nextClick: { id: string; } | null = null;
+  if (clicks.length > 0)
+  {
+    nextClick = await prisma.click
+      .findFirst(
+        {
+          select: {
+            id: true
+          },
+          where: {
+            id: {
+              gt: clicks[clicks.length - 1]?.id
+            }
+          },
+          orderBy: {
+            id: 'asc'
+          }
+        });
+  }
+
+  let prevClick: { id: string; }[] | null = null;
+  if (clicks.length > 0)
+  {
+    prevClick = await prisma.click
+      .findMany({
+        select: {
+          id: true
+        },
+        where: {
+          id: {
+            lt: clicks[0]?.id
+          }
+        },
+        orderBy: {
+          id: 'desc'
+        },
+        take: takeNumber
+      });
+  }
+
+
+  return {
+    items: clicks,
+    nextCursor: nextClick?.id ?? '',
+    prevCursor: prevClick?.[prevClick.length - 1]?.id ?? ''
+  }
+}
+
 const findLinkBySlug = async (tenantId: string, slug: string) =>
 {
   const link = await prisma.link
@@ -126,5 +202,5 @@ const findLinkBySlug = async (tenantId: string, slug: string) =>
   return link;
 }
 
-export type { LinkPaginationWapper }
-export { findPaginated, findLinkBySlug, save }
+export type { LinkPaginationWapper, ClickPaginationWapper }
+export { findPaginated, findAnalitycsPaginated, findLinkBySlug, save }
