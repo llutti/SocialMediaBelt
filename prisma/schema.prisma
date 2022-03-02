@@ -92,4 +92,13 @@ model Link {
   createdAt DateTime @default(now())
   tenantId  String
   tenant    Tenant   @relation(fields: [tenantId], references: [id])
+  clicks    Click[]
+}
+
+model Click {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  metadata  String
+  linkId    String
+  link      Link     @relation(fields: [linkId], references: [id])
 }

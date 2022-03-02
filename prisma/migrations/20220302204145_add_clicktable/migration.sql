@@ -1,0 +1,8 @@
+-- CreateTable
+CREATE TABLE "Click" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "metadata" TEXT NOT NULL,
+    "linkId" TEXT NOT NULL,
+    CONSTRAINT "Click_linkId_fkey" FOREIGN KEY ("linkId") REFERENCES "Link" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+);
