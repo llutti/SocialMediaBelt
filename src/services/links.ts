@@ -81,8 +81,29 @@ const findPaginated = async (tenantId: string, cursor?: string | string[], take?
       });
   }
 
+  const linksWithClicks = await prisma
+    .click
+    .groupBy({
+      by: ['linkId'],
+      _count: {
+        id: true
+      }
+    });
+
+  const linksWithAnalitycs = links
+    .map(link =>
+    {
+      const clicks = linksWithClicks
+        .find(lnk => lnk.linkId = link.id)
+        ?._count.id || 0;
+      return {
+        ...link,
+        clicks
+      }
+    });
+
   return {
-    items: links,
+    items: linksWithAnalitycs,
     nextCursor: nextLink?.id ?? '',
     prevCursor: prevLink?.[prevLink.length - 1]?.id ?? ''
   }

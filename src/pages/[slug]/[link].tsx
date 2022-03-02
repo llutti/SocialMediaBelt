@@ -1,5 +1,5 @@
 import { GetServerSideProps, NextPage } from 'next';
-
+import { prisma } from "@lib/prisma";
 import { findLinkBySlug } from 'src/services/links';
 import { findTenantBySlug } from 'src/services/tenants';
 
@@ -37,6 +37,21 @@ export const getServerSideProps: GetServerSideProps = async (context) =>
     }
   }
 
+  // Counting Clicks
+
+  const clicks = await prisma
+    .click
+    .create({
+      data: {
+        metadata: JSON.stringify(context.req.headers),
+        link: {
+          connect: {
+            id: link.id,
+          }
+        }
+      }
+    })
+
   // return {
   //   redirect: {
   //     destination: link.destination
@@ -45,7 +60,7 @@ export const getServerSideProps: GetServerSideProps = async (context) =>
 
   return {
     props: {
-      message:'O REDIRECT ESTÁ DESATIVADO PARA FACITAR OS TESTES',
+      message: 'O REDIRECT ESTÁ DESATIVADO PARA FACITAR OS TESTES',
       ...context?.params,
       tenant,
       link
