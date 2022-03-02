@@ -5,6 +5,7 @@ import * as yup from "yup";
 import { useRouter } from 'next/router';
 
 import { executePost } from '@lib/fetch';
+import { mutate } from 'swr';
 
 interface TenantSettingsForm
 {
@@ -26,6 +27,7 @@ const Settings = () =>
   const onSubmit: SubmitHandler<TenantSettingsForm> = async (inputs) =>
   {
     await executePost({ url: `/api/${router?.query?.tenantid}/settings`, data: inputs });
+    mutate( `/api/tenants/${router?.query?.tenantid}`);
   }
 
   return (
