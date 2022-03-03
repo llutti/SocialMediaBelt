@@ -18,8 +18,7 @@ const LinksAnalitycs = () =>
   const cursor = router?.query?.cursor ? `?cursor=${router?.query?.cursor}` : '';
   const tenantId = String(router?.query?.tenantid);
   const linkId = String(router?.query?.linkid);
-  const { data } = useHttpGet<ClickPaginationWapper>(tenantId && linkId && `/api/${tenantId}/links/${linkId}/analitycs/${cursor}`);
-
+  const { data } = useHttpGet<ClickPaginationWapper>(tenantId && linkId && `/api/${tenantId}/links/${linkId}/analitycs${cursor}`);
   return (
     <>
       {/* <pre>{JSON.stringify(data, null, 2)}</pre> */}
@@ -91,7 +90,7 @@ const LinksAnalitycs = () =>
                                       <span className="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight">
                                         {
                                           click?.metadata &&
-                                          JSON.parse(click?.metadata)['headers']['user-agent'] || 'NA'
+                                          JSON.parse(click?.metadata)?.['headers']?.['user-agent'] || 'NA'
                                         }
                                       </span>
                                     </td>

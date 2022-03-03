@@ -3,7 +3,7 @@ import { prisma } from "@lib/prisma";
 
 interface LinkPaginationWapper
 {
-  items: Link[],
+  items: (Link & { clicks: number })[],
   nextCursor?: string,
   prevCursor?: string,
 }
@@ -99,9 +99,7 @@ const findPaginated = async (tenantId: string, cursor?: string | string[], take?
   const linksWithAnalitycs = links
     .map(link =>
     {
-      const clicks = linksWithClicks
-        .find(lnk => lnk.linkId = link.id)
-        ?._count.id || 0;
+      const clicks = linksWithClicks.find(lnk => lnk.linkId = link.id)?._count.id || 0;
       return {
         ...link,
         clicks

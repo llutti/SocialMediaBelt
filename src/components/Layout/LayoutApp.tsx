@@ -6,6 +6,7 @@ import LinkMenu from '@components/LinkMenu';
 import { signOut, useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import { useHttpGet } from 'src/hooks/api';
+import { Tenant } from '@prisma/client';
 
 interface Props
 {
@@ -16,9 +17,8 @@ const LayoutApp = ({ children }: Props) =>
 {
   const router = useRouter();
   const { data: session } = useSession();
-  const tenantId = router?.query?.tenantid as string;
-  const { data: tenant } = useHttpGet(tenantId ? `/api/tenants/${tenantId}` : null);
-  console.log(tenantId);
+  const tenantId = router?.query?.tenantid ?? null;
+  const { data: tenant } = useHttpGet<Tenant>(tenantId && `/api/tenants/${tenantId}`);
 
   return (
     <>

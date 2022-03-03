@@ -36,9 +36,9 @@ export default async function handler(
       }
       const saved = await create(newData);
 
-      res.status(200).json(saved);
-
-      return;
+      return res
+        .status(200)
+        .json(saved);
     }
 
     const tenants = await prisma.tenant.findMany({
@@ -51,8 +51,11 @@ export default async function handler(
       }
     });
 
-    res.status(200).json(tenants)
-    return
+    return res
+      .status(200)
+      .json(tenants);
   }
-  res.status(200).json([]);
+  return res
+    .status(200)
+    .json([]);
 }

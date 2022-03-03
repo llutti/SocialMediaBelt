@@ -11,5 +11,7 @@ export default async function handler(
 )
 {
   const accounts = await prisma?.account.findMany();
-  res.status(200).json(accounts ?? [])
+  return res
+    .status(200)
+    .json(accounts ?? [])
 }

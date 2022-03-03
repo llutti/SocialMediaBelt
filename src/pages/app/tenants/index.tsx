@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 
-import { Tenant as TenantEntity } from '@prisma/client';
+import { Tenant } from '@prisma/client';
 
 import Heading1 from '@components/Heading1';
 import { useHttpGet } from 'src/hooks/api';
@@ -13,7 +13,7 @@ import Alert from '@components/Alert';
 const Tenants = () =>
 {
   const router = useRouter();
-  const { data, mutate } = useHttpGet(`/api/tenants`);
+  const { data: tenants, mutate } = useHttpGet<Tenant[]>(`/api/tenants`);
 
   const deleteLink = async (id: string) =>
   {
@@ -23,18 +23,18 @@ const Tenants = () =>
 
   useEffect(() =>
   {
-    if (data && router)
+    if (tenants && router)
     {
       if (router.query?.cursor)
       {
-        if (data?.items?.length === 0)
+        if (tenants?.length === 0)
         {
           router.push(`/app/${router?.query?.tenantid}/links`);
         }
       }
     }
 
-  }, [data, router])
+  }, [tenants, router])
   return (
     <>
       {/* <pre>{JSON.stringify(data, null, 2)}</pre> */}
@@ -55,7 +55,7 @@ const Tenants = () =>
       </div>
 
       {
-        (data && data?.length === 0) ?
+        (tenants && tenants?.length === 0) ?
           (
             <Alert>Nenhuma conta cadastrada.</Alert>
           )
@@ -86,9 +86,9 @@ const Tenants = () =>
                       </thead>
                       <tbody>
                         {
-                          data &&
-                          data?.map(
-                            (tenant: TenantEntity) =>
+                          tenants &&
+                          tenants?.map(
+                            (tenant) =>
                             {
                               return (
                                 <tr key={tenant.id}>
@@ -97,7 +97,7 @@ const Tenants = () =>
                                       <div className="ml-3">
                                         <p className="text-gray-900 whitespace-no-wrap">
                                           {tenant.name}
-                                          <br/>
+                                          <br />
                                           <span className='text-xs text-gray-500'>
                                             {tenant.slug}.socialmediabelt.com
                                           </span>

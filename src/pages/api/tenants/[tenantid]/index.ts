@@ -28,13 +28,16 @@ export default async function handler(
 
     if (!tenant)
     {
-      res.status(200).json({ message: `Tenant [${tenantId}] not found.` });
-      return
+      return res
+        .status(200)
+        .json({ message: `Tenant [${tenantId}] not found.` });
     }
 
-    res.status(200).json(tenant);
-
-    return
+    return res
+      .status(200)
+      .json(tenant);
   }
-  res.status(200).json({ message: 'You need be auth.' });
+  return res
+    .status(200)
+    .json({ message: 'You need be auth.' });
 }

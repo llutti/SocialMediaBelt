@@ -26,29 +26,25 @@ export default async function handler(
 
   if (session)
   {
-    const tenantId = String(req.query.tenantId);
+    const tenantId = String(req.query.tenantid);
     const tenant = await checkTenantPermition(tenantId, session?.user?.id);
     if (!tenant)
     {
-      res.status(404)
-        .json({
-          message: 'Needs to be auth'
-        });
-
-      return;
+      return res
+        .status(404)
+        .json({ message: 'Needs to be auth' });
     }
-    const linkId = req.query.linkId as string;
+    const linkId = req.query.linkid as string;
 
     const { cursor, take } = req.query;
-    const links = await findAnalitycsPaginated(linkId, cursor, take);
+    const clicks = await findAnalitycsPaginated(linkId, cursor, take);
 
-    res.status(200)
-      .json({
-        items: links.items,
-        nextCursor: links.nextCursor,
-        prevCursor: links.prevCursor,
-      });
-
+    return res
+      .status(200)
+      .json(clicks);
   }
-  res.status(400).json({ success: false });
+
+  return res
+    .status(400)
+    .json({ success: false });
 }

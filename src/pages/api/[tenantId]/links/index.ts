@@ -19,15 +19,13 @@ export default async function handler(
 
   if (session)
   {
-    const tenantId = req.query.tenantId as string;
+    const tenantId = req.query.tenantid as string;
     const tenant = await checkTenantPermition(tenantId, session?.user?.id);
     if (!tenant)
     {
-      res
+      return res
         .status(404)
         .json({ message: 'You need be auth.' });
-
-      return;
     }
 
     if (req.method === 'POST')
@@ -45,9 +43,9 @@ export default async function handler(
       }
       const savedLink = await save(linkData);
 
-      res.status(200).json(savedLink);
-
-      return;
+      return res
+        .status(200)
+        .json(savedLink);
     }
 
     if (req.method === 'GET')
@@ -55,19 +53,17 @@ export default async function handler(
       const { cursor, take } = req.query;
       const links = await findPaginated(tenantId, cursor, take);
 
-      res.status(200)
+      return res
+        .status(200)
         .json({
           items: links.items,
           nextCursor: links.nextCursor,
           prevCursor: links.prevCursor,
         });
-
-      return;
     }
   }
 
-  res
-  .status(404)
-  .json({ message: 'You need be auth.' });
-
+  return res
+    .status(404)
+    .json({ message: 'You need be auth.' });
 }

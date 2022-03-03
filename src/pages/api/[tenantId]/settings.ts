@@ -3,7 +3,7 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import { getSession } from 'next-auth/react';
 import { Prisma, Tenant } from '@prisma/client';
 import { checkTenantPermition } from 'src/services/users';
-import { save } from '@services/tenants';
+import { findTenantById, save } from '@services/tenants';
 
 interface SessionError
 {
@@ -19,16 +19,13 @@ export default async function handler(
 
   if (session)
   {
-    const tenantId = req.query.tenantId as string;
+    const tenantId = req.query.tenantid as string;
     const tenant = await checkTenantPermition(tenantId, session?.user?.id);
     if (!tenant)
     {
-      res
+      return res
         .status(404)
         .json({ message: 'You need be auth.' });
-
-
-      return;
     }
 
     if (req.method === 'POST')
@@ -39,15 +36,24 @@ export default async function handler(
       }
       const saved = await save(tenantId, newData);
 
-      res.status(200).json(saved);
+      return res
+        .status(200)
+        .json(saved);
+    }
 
-      return;
+    if (req.method === 'GET')
+    {
+
+      const tenant = await findTenantById(tenantId);
+
+      return res
+        .status(200)
+        .json(tenant);
     }
 
   }
 
-  res
+  return res
     .status(404)
     .json({ message: 'You need be auth.' });
-
 }

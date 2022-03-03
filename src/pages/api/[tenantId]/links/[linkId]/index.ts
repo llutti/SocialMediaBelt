@@ -25,18 +25,15 @@ export default async function handler(
 
   if (session)
   {
-    const tenantId = String(req.query.tenantId);
+    const tenantId = String(req.query.tenantid);
     const tenant = await checkTenantPermition(tenantId, session?.user?.id);
     if (!tenant)
     {
-      res.status(404)
-      .json({
-        message: 'Needs to be auth'
-      });
-
-      return;
+      return res
+        .status(404)
+        .json({ message: 'Needs to be auth' });
     }
-    const linkId = req.query.linkId as string;
+    const linkId = req.query.linkid as string;
 
     if (req.method === 'DELETE')
     {
@@ -49,12 +46,9 @@ export default async function handler(
 
       if (!link)
       {
-        res.status(404)
-        .json({
-          message: 'Needs to be auth'
-        });
-
-        return;
+        return res
+          .status(404)
+          .json({ message: 'Needs to be auth' });
       }
 
       await prisma.link
@@ -64,9 +58,12 @@ export default async function handler(
           }
         });
 
-      res.status(200).json({ success: true, id: linkId });
-      return
+      return res
+        .status(200)
+        .json({ success: true, id: linkId });
     }
   }
-  res.status(400).json({ success: false });
+  return res
+    .status(400)
+    .json({ success: false });
 }

@@ -3,20 +3,19 @@ import { useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 
-import { Link as LinkEntity } from '@prisma/client';
-
 import Heading1 from '@components/Heading1';
 import Heading2 from '@components/Heading2';
 import { useHttpGet } from 'src/hooks/api';
 import { executeDelete } from '@lib/fetch';
 import Alert from '@components/Alert';
+import { LinkPaginationWapper } from '@services/links';
 
 const Links = () =>
 {
   const router = useRouter();
   const cursor = router?.query?.cursor ? `?cursor=${router?.query?.cursor}` : '';
-  const tenantId = String(router?.query?.tenantid);
-  const { data, mutate } = useHttpGet(tenantId && `/api/${tenantId}/links${cursor}`);
+  const tenantId = router?.query?.tenantid ?? null;
+  const { data, mutate } = useHttpGet<LinkPaginationWapper>(tenantId && `/api/${tenantId}/links${cursor}`);
 
   const deleteLink = async (id: string) =>
   {
@@ -109,7 +108,7 @@ const Links = () =>
                         {
                           data?.items &&
                           data?.items.map(
-                            (link: any) =>
+                            (link) =>
                             {
                               return (
                                 <tr key={link.id}>

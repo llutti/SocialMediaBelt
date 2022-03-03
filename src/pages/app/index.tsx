@@ -1,3 +1,4 @@
+import { Tenant } from '@prisma/client';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image'
 import Link from 'next/link';
@@ -12,28 +13,29 @@ const IndexApp = () =>
 {
   const router = useRouter();
   const [shouldRedirect, setShouldRedirect] = useState(false);
-  const { data } = useHttpGet('/api/tenants');
+  const { data: tenants } = useHttpGet<Tenant[]>('/api/tenants');
   const { data: session } = useSession();
 
   useEffect(() =>
   {
-    if (data?.length === 1)
+    if (tenants?.length === 1)
     {
       setShouldRedirect(true);
     }
-  }, [data])
+  }, [tenants])
 
   useEffect(() =>
   {
-    if (shouldRedirect === true)
+    if ((shouldRedirect === true)
+      && (tenants))
     {
       setTimeout(() =>
       {
-        router.push(`/app/${data[0].id}`);
-      }, 3000);
+        router.push(`/app/${tenants[0]?.id}`);
+      }, 2000);
       setShouldRedirect(false);
     }
-  }, [shouldRedirect, data, router])
+  }, [shouldRedirect, tenants, router])
 
   return (
     <div className='max-w-lg mx-auto text-center my-6'>
@@ -49,11 +51,11 @@ const IndexApp = () =>
       <h1>{session?.user?.name}</h1>
       <div className="mt-6">
         {
-          data &&
-          data.length > 1 &&
-          data
+          tenants &&
+          tenants.length > 1 &&
+          tenants
             .map(
-              (tenant: any) =>
+              (tenant) =>
               {
                 return (
                   <Link key={tenant.id} href={`/app/${tenant.id}`}>
@@ -65,7 +67,7 @@ const IndexApp = () =>
         }
       </div>
       {
-        (data?.length === 1) &&
+        (tenants?.length === 1) &&
         <div>
           <button type="button" className="py-2 px-4 flex justify-center items-center  bg-blue-600 hover:bg-blue-700 focus:ring-blue-500 focus:ring-offset-blue-200 text-white w-full transition ease-in duration-200 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2  rounded-lg ">
             <svg width="20" height="20" fill="currentColor" className="mr-2 animate-spin" viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg">
