@@ -7,10 +7,11 @@ import { useRouter } from 'next/router';
 import Heading1 from '@components/Heading1';
 import Heading2 from '@components/Heading2';
 import { useHttpGet } from 'src/hooks/api';
-import Alert from '@components/Alert';
+
 import { ClickPaginationWapper } from '@services/links';
 import { formatRelative } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { Alert } from '@components/Alert';
 
 const LinksAnalitycs = () =>
 {
@@ -32,7 +33,7 @@ const LinksAnalitycs = () =>
       {
         (data && data?.items?.length === 0) ?
           (
-            <Alert>Link ainda não utilizado.</Alert>
+            <Alert type='Info'>Link ainda não utilizado.</Alert>
           )
           :
           (

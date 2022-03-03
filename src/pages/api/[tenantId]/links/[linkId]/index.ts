@@ -4,6 +4,8 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import { prisma } from "@lib/prisma";
 import { getSession } from 'next-auth/react';
 import { checkTenantPermition } from 'src/services/users';
+import { findLinkById } from '@services/links';
+import { Link } from '@prisma/client';
 
 interface SessionError
 {
@@ -18,7 +20,7 @@ interface returnData
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<returnData | SessionError>
+  res: NextApiResponse<Link | returnData | SessionError | null>
 )
 {
   const session = await getSession({ req });
@@ -61,6 +63,14 @@ export default async function handler(
       return res
         .status(200)
         .json({ success: true, id: linkId });
+    }
+    if (req.method === 'GET')
+    {
+      const link = await findLinkById(linkId);
+
+      return res
+        .status(200)
+        .json(link);
     }
   }
   return res

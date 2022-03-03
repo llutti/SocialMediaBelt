@@ -8,7 +8,7 @@ import { Tenant } from '@prisma/client';
 import Heading1 from '@components/Heading1';
 import { useHttpGet } from 'src/hooks/api';
 import { executeDelete } from '@lib/fetch';
-import Alert from '@components/Alert';
+import { Alert } from '@components/Alert';
 
 const Tenants = () =>
 {
@@ -57,7 +57,7 @@ const Tenants = () =>
       {
         (tenants && tenants?.length === 0) ?
           (
-            <Alert>Nenhuma conta cadastrada.</Alert>
+            <Alert type='Info'>Nenhuma conta cadastrada.</Alert>
           )
           :
           (

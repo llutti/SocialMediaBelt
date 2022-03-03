@@ -7,8 +7,8 @@ import Heading1 from '@components/Heading1';
 import Heading2 from '@components/Heading2';
 import { useHttpGet } from 'src/hooks/api';
 import { executeDelete } from '@lib/fetch';
-import Alert from '@components/Alert';
 import { LinkPaginationWapper } from '@services/links';
+import { Alert } from '@components/Alert';
 
 const Links = () =>
 {
@@ -66,7 +66,7 @@ const Links = () =>
       {
         (data && data?.items?.length === 0) ?
           (
-            <Alert>Nenhum link cadastrado.</Alert>
+            <Alert type='Info'>Nenhum link cadastrado.</Alert>
           )
           :
           (
@@ -145,9 +145,11 @@ const Links = () =>
                                     </span>
                                   </td>
                                   <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                    <button className='inline-block mx-1 text-indigo-600 hover:text-indigo-900' type='button'>
-                                      Edit
-                                    </button>
+                                    <Link href={`/app/${tenantId}/links/${link.id}/edit`} passHref={true}>
+                                      <button className='inline-block mx-1 text-indigo-600 hover:text-indigo-900' type='button'>
+                                        Edit
+                                      </button>
+                                    </Link>
                                     <button className='inline-block mx-1 text-indigo-600 hover:text-indigo-900' type='button' onClick={() => deleteLink(link.id)}>
                                       Delete
                                     </button>

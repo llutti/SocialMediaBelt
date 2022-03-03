@@ -4,10 +4,29 @@ interface IPost<T>
   data: T;
 }
 
+interface IPut<T>
+{
+  url: string;
+  data: T;
+}
+
 const executePost = async <T>({ url, data }: IPost<T>) =>
 {
   const res = await fetch(url, {
     method: 'POST',
+    headers: {
+      'content-type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  });
+
+  return res.json();
+}
+
+const executePut = async <T>({ url, data }: IPut<T>) =>
+{
+  const res = await fetch(url, {
+    method: 'PUT',
     headers: {
       'content-type': 'application/json',
     },
@@ -34,4 +53,4 @@ const executeDelete = async ({ url }: IDelete) =>
   return res.json();
 }
 
-export { executePost, executeDelete }
+export { executeDelete, executePost, executePut }

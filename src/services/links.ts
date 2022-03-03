@@ -183,6 +183,18 @@ const findAnalitycsPaginated = async (linkId: string, cursor?: string | string[]
   }
 }
 
+const findLinkById = async (id: string) =>
+{
+  const link = await prisma.link
+    .findFirst({
+      where: {
+        id
+      }
+    });
+
+  return link;
+}
+
 const findLinkBySlug = async (tenantId: string, slug: string) =>
 {
   const link = await prisma.link
@@ -201,4 +213,4 @@ const findLinkBySlug = async (tenantId: string, slug: string) =>
 }
 
 export type { LinkPaginationWapper, ClickPaginationWapper }
-export { findPaginated, findAnalitycsPaginated, findLinkBySlug, save }
+export { findPaginated, findAnalitycsPaginated, findLinkBySlug, findLinkById, save }

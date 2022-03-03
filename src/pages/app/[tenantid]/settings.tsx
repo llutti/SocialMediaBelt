@@ -6,6 +6,10 @@ import { useRouter } from 'next/router';
 
 import { executePost } from '@lib/fetch';
 import { mutate } from 'swr';
+import { useHttpGet } from 'src/hooks/api';
+import { useEffect, useState } from 'react';
+import { Tenant } from '@prisma/client';
+import { Alert } from '@components/Alert';
 
 interface TenantSettingsForm
 {
@@ -22,13 +26,29 @@ const schema = yup.object(
 
 const Settings = () =>
 {
+  const [success, setSuccess] = useState(false);
   const router = useRouter();
-  const { register, handleSubmit, formState: { errors } } = useForm<TenantSettingsForm>({ resolver: yupResolver(schema) });
+  const { register, handleSubmit, formState: { errors }, setValue } = useForm<TenantSettingsForm>({ resolver: yupResolver(schema) });
+  const tenantId = router?.query?.tenantid ?? null;
   const onSubmit: SubmitHandler<TenantSettingsForm> = async (inputs) =>
   {
-    await executePost({ url: `/api/${router?.query?.tenantid}/settings`, data: inputs });
-    mutate( `/api/tenants/${router?.query?.tenantid}`);
-  }
+    await executePost({ url: `/api/${tenantId}/settings`, data: inputs });
+    mutate(`/api/tenants/${tenantId}`);
+    setSuccess(true);
+  };
+
+  const { data } = useHttpGet<Tenant>(tenantId && `/api/${tenantId}/settings`);
+
+  useEffect(
+    () =>
+    {
+      if (data)
+      {
+        setValue('name', data.name);
+        setValue('slug', data.slug);
+      }
+    },
+    [data, setValue]);
 
   return (
     <>
@@ -44,6 +64,11 @@ const Settings = () =>
           <div className="items-center w-full p-4 space-y-4 text-gray-500 md:inline-flex md:space-y-0">
             <h2 className="max-w-sm mx-auto md:w-1/3">Identificação</h2>
             <div className="max-w-sm mx-auto md:w-2/3 space-y-5">
+
+              {
+                success &&
+                <Alert type='Success'>Alteração realizada com sucesso!</Alert>
+              }
 
               <div className=" relative ">
                 <input
