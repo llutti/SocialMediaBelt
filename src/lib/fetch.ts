@@ -23,10 +23,10 @@ const executePost = async <T>({ url, data }: IPost<T>) =>
   return res.json();
 }
 
-const executePut = async <T>({ url, data }: IPut<T>) =>
+const executePatch = async <T>({ url, data }: IPut<T>) =>
 {
   const res = await fetch(url, {
-    method: 'PUT',
+    method: 'PATCH',
     headers: {
       'content-type': 'application/json',
     },
@@ -53,4 +53,4 @@ const executeDelete = async ({ url }: IDelete) =>
   return res.json();
 }
 
-export { executeDelete, executePost, executePut }
+export { executeDelete, executePost, executePatch }
