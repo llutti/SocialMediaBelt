@@ -9,19 +9,46 @@ import { Tenant } from '@prisma/client';
 
 import { Alert } from '@components/Alert';
 import Heading2 from '@components/Heading2';
-import { executePost } from '@lib/fetch';
+import { Input } from '@components/Input';
 import { useHttpGet } from '@hooks/api';
+import { executePost } from '@lib/fetch';
 
 interface TenantSettingsForm
 {
+  tenantId: string;
   name: string;
   slug: string;
 }
 
 const schema = yup.object(
   {
-    name: yup.string().required(),
-    slug: yup.string().required(),
+    tenantId: yup
+      .string(),
+    name: yup
+      .string()
+      .required(),
+    slug: yup
+      .string()
+      .required()
+      .test(
+        'isUniqueSlug',
+        'Este SLUG já está sendo utilizado.',
+        async (slug, context) =>
+        {
+          const tenantId = context.parent.tenantId;
+          const res = await fetch(`/api/tenants?slug=${slug}`, { method: 'GET', headers: { 'Content-Type': 'application/json' }, });
+          const data = await res.json();
+          let result = !!data?.message;
+          if (result === false)
+          {
+            if (data?.id === tenantId)
+            {
+              result = true;
+            }
+          }
+
+          return result;
+        }),
   }).required();
 
 
@@ -43,13 +70,14 @@ const Settings = () =>
   useEffect(
     () =>
     {
+      setValue('tenantId', String(tenantId));
       if (data)
       {
         setValue('name', data.name);
         setValue('slug', data.slug);
       }
     },
-    [data, setValue]);
+    [tenantId, data, setValue]);
 
   return (
     <>
@@ -71,22 +99,20 @@ const Settings = () =>
                 <Alert type='Success'>Alteração realizada com sucesso!</Alert>
               }
 
-              <div className=" relative ">
-                <input
-                  type="text"
-                  className=" rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
-                  placeholder="Nome da Conta"
-                  {...register('name')}
-                />
-              </div>
-              <div className=" relative ">
-                <input
-                  type="text"
-                  className=" rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
-                  placeholder="Identificador (slug)"
-                  {...register('slug')}
-                />
-              </div>
+              <Input
+                label='Nome da Conta'
+                placeholder='Nome da Conta'
+                {...register('name')}
+                erros={errors?.name}
+              />
+
+              <Input
+                label='Identificador (slug)'
+                placeholder='Identificador (slug)'
+                {...register('slug')}
+                erros={errors?.slug}
+              />
+
             </div>
           </div>
 

@@ -44,7 +44,6 @@ const findTenantBySlug = async (slug: string) =>
     .findFirst({
       select: {
         id: true,
-        name: true,
       },
       where: {
         slug

@@ -4,18 +4,27 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import { prisma } from "@lib/prisma";
 import { getSession } from 'next-auth/react';
 import { Prisma, Tenant } from '@prisma/client';
-import { create } from '@services/tenants';
+import { create, findTenantBySlug } from '@services/tenants';
+
+interface TenantId
+{
+  id: String;
+}
+
+interface SessionError
+{
+  message?: string
+}
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<Tenant[] | Tenant>
+  res: NextApiResponse<Tenant[] | Tenant | TenantId | SessionError>
 )
 {
   const session = await getSession({ req });
 
   if (session)
   {
-
     if (req.method === 'POST')
     {
       const newData: Prisma.TenantCreateInput = {
@@ -41,20 +50,44 @@ export default async function handler(
         .json(saved);
     }
 
-    const tenants = await prisma.tenant.findMany({
-      where: {
-        users: {
-          some: {
-            userId: session?.user.id ?? undefined
-          }
-        }
-      }
-    });
+    if (req.method === 'GET')
+    {
+      const { slug } = req.query;
 
-    return res
-      .status(200)
-      .json(tenants);
+      if (slug)
+      {
+        const tenant = await findTenantBySlug(slug as string);
+
+        if (!tenant)
+        {
+          return res
+            .status(404)
+            .json({ message: 'Slug invalid' });
+        }
+
+        return res
+          .status(200)
+          .json(tenant);
+      }
+
+      const tenants = await prisma
+        .tenant
+        .findMany({
+          where: {
+            users: {
+              some: {
+                userId: session?.user.id ?? undefined
+              }
+            }
+          }
+        });
+
+      return res
+        .status(200)
+        .json(tenants);
+    }
   }
+
   return res
     .status(200)
     .json([]);

@@ -6,6 +6,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 
 import Heading2 from '@components/Heading2';
 import { executePost } from '@lib/fetch';
+import { Input } from '@components/Input';
 
 interface NewTenantForm
 {
@@ -16,9 +17,22 @@ interface NewTenantForm
 
 const schema = yup.object(
   {
-    name: yup.string().required(),
-    plan: yup.string().required(),
-    slug: yup.string().required(),
+    name: yup
+      .string()
+      .required(),
+    slug: yup
+      .string()
+      .required()
+      .test(
+        'isUniqueSlug',
+        'Este SLUG já está sendo utilizado.',
+        async (slug) =>
+        {
+          const res = await fetch(`/api/tenants?slug=${slug}`, { method: 'GET', headers: { 'Content-Type': 'application/json' }, });
+          const data = await res.json();
+
+          return !!data?.message;
+        }),
   }).required();
 
 const CreateTenant = () =>
@@ -45,31 +59,27 @@ const CreateTenant = () =>
           <div className="items-center w-full p-4 space-y-4 text-gray-500 md:inline-flex md:space-y-0">
             <h2 className="max-w-sm mx-auto md:w-1/3">Identificação</h2>
             <div className="max-w-sm mx-auto md:w-2/3 space-y-5">
+              <Input
+                label='Nome da Conta'
+                placeholder='Nome da Conta'
+                {...register('name')}
+                erros={errors?.name}
+              />
 
-              <div className=" relative ">
-                <input
-                  type="text"
-                  className=" rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
-                  placeholder="Nome da Conta"
-                  {...register('name')}
-                />
-              </div>
-              <div className=" relative ">
-                <input
-                  type="text"
-                  className=" rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
-                  placeholder="Identificador (slug)"
-                  {...register('slug')}
-                />
-              </div>
-              <div className=" relative ">
-                <input
-                  type="text"
-                  className=" rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
-                  placeholder="Plano"
-                  {...register('plan')}
-                />
-              </div>
+              <Input
+                label='Identificador (slug)'
+                placeholder='Identificador (slug)'
+                {...register('slug')}
+                erros={errors?.slug}
+              />
+
+              <Input
+                label='Plano'
+                placeholder='Plano'
+                {...register('plan')}
+                erros={errors?.plan}
+              />
+
             </div>
           </div>
           <hr />
