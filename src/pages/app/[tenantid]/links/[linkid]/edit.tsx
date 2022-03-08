@@ -14,6 +14,8 @@ import { Link as LinkEntity } from '@prisma/client';
 
 interface NewLinkForm
 {
+  tenantId: string;
+  linkId: string;
   name: string;
   publicName: string;
   slug: string;
@@ -21,43 +23,60 @@ interface NewLinkForm
   appLink: string;
 }
 
+const schema = yup.object(
+  {
+    tenantId: yup
+      .string(),
+    linkId: yup
+      .string(),
+    name: yup
+      .string()
+      .required(),
+    publicName: yup
+      .string()
+      .required(),
+    slug: yup
+      .string()
+      .required()
+      .test(
+        'isUniqueSlug',
+        'Este SLUG já está sendo utilizado.',
+        async (slug, context) =>
+        {
+          const tenantId = context.parent.tenantId;
+          const linkId = context.parent.linkId;
+          const res = await fetch(`/api/${tenantId}/links?slug=${slug}`, { method: 'GET', headers: { 'Content-Type': 'application/json' }, });
+          const data = await res.json();
+          let result = !!data?.message;
+          if (result === false)
+          {
+            if (data?.id === linkId)
+            {
+              result = true;
+            }
+          }
+
+          return result;
+        }),
+    destination: yup
+      .string()
+      .required(),
+    appLink: yup
+      .string() //.required(),
+  }).required();
+
 const EditLink = () =>
 {
   const [success, setSuccess] = useState(false);
   const router = useRouter();
   const tenantId = router?.query?.tenantid ?? null;
   const linkId = router?.query?.linkid ?? null;
-  const schema = yup.object(
-    {
-      name: yup.string().required(),
-      publicName: yup.string().required(),
-      slug: yup.string().required()
-        .test(
-          'uniqueSlug',
-          'This SLUG is already registered.',
-          async (slug) =>
-          {
-            const res = await fetch(`/api/${tenantId}/links?slug=${slug}`, { method: 'GET', headers: { 'Content-Type': 'application/json' }, });
-            const data = await res.json();
-            let result = !!data?.message;
-            if (result === false)
-            {
-              if (data?.id === linkId)
-              {
-                result = true;
-              }
-            }
 
-            return result;
-          }),
-      destination: yup.string().required(),
-      appLink: yup.string() //.required(),
-    }).required();
   const { register, handleSubmit, formState: { errors }, setValue } = useForm<NewLinkForm>({ resolver: yupResolver(schema) });
   const onSubmit: SubmitHandler<NewLinkForm> = async (inputs) =>
   {
     setSuccess(false);
-    const res = await executePatch({ url: `/api/${tenantId}/links/${linkId}`, data: inputs });
+    await executePatch({ url: `/api/${tenantId}/links/${linkId}`, data: inputs });
     router.push(`/app/${tenantId}/links`);
   }
   const { data } = useHttpGet<LinkEntity>(tenantId && linkId && `/api/${tenantId}/links/${linkId}`);
@@ -65,6 +84,9 @@ const EditLink = () =>
   useEffect(
     () =>
     {
+      setValue('tenantId', String(tenantId));
+      setValue('publicName', String(linkId));
+
       if (data)
       {
         setValue('name', data.name);
@@ -74,38 +96,10 @@ const EditLink = () =>
         // setValue('appLink', data.appLink);
       }
     },
-    [data, setValue]);
+    [tenantId, linkId, data, setValue]);
 
-  const validarSlug = async (value: string) =>
-  {
-
-    return !!data;
-  }
   return (
     <>
-      {/* <pre>{JSON.stringify(data, null, 2)}</pre> */}
-      {/* <div className="grid grid-cols-1 md:grid-cols-2">
-        <div>
-          <Heading1>Editar Link</Heading1>
-          <Heading2>Gerenciador de Links</Heading2>
-        </div>
-        <div className="flex items-center">
-          <Link href={`/app/${router?.query?.tenantid}/links/create`} passHref={true}>
-            <button
-              type="button"
-              className="w-full border-l border-t border-b text-base font-medium rounded-l-md text-black bg-white hover:bg-gray-100 px-4 py-2"
-            >
-              Criar Link
-            </button>
-          </Link>
-          <button
-            type="button"
-            className="w-full border text-base font-medium text-black bg-white hover:bg-gray-100 px-4 py-2"
-          >
-            Criar Grupo
-          </button>
-        </div>
-      </div> */}
       <form onSubmit={handleSubmit(onSubmit)} className="container max-w-2xl mx-auto shadow-md md:w-3/4 mt-4">
         <div className="p-4 bg-gray-100 border-t-2 border-indigo-400 rounded-lg bg-opacity-5">
           <div className="max-w-sm mx-auto md:w-full md:mx-0">

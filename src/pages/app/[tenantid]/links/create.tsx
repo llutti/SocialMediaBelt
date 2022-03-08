@@ -1,4 +1,4 @@
-import { useRouter } from 'next/router';
+import React, { useRouter } from 'next/router';
 import Link from 'next/link';
 
 import { SubmitHandler, useForm } from 'react-hook-form';
@@ -9,9 +9,11 @@ import Heading1 from '@components/Heading1';
 import Heading2 from '@components/Heading2';
 import { Input } from '@components/Input';
 import { executePost } from '@lib/fetch';
+import { useEffect } from 'react';
 
 interface NewLinkForm
 {
+  tenantId: string;
   name: string;
   publicName: string;
   slug: string;
@@ -19,39 +21,43 @@ interface NewLinkForm
   appLink: string;
 }
 
+const schema = yup.object(
+  {
+    tenantId: yup
+      .string(),
+    name: yup
+      .string()
+      .required(),
+    publicName: yup
+      .string()
+      .required(),
+    slug: yup
+      .string()
+      .required()
+      .test(
+        'isUniqueSlug',
+        'Este SLUG já está sendo utilizado.',
+        async (slug, context) =>
+        {
+          const tenantId = context.parent.tenantId;
+          const res = await fetch(`/api/${tenantId}/links?slug=${slug}`, { method: 'GET', headers: { 'Content-Type': 'application/json' }, });
+          const data = await res.json();
+
+          return !!data?.message;
+        }),
+    destination: yup
+      .string()
+      .required(),
+    appLink: yup
+      .string()
+      .required(),
+  }).required();
+
 const CreateLink = () =>
 {
   const router = useRouter();
   const tenantId = router?.query?.tenantid ?? null;
-  const schema = yup.object(
-    {
-      name: yup
-        .string()
-        .required(),
-      publicName: yup
-        .string()
-        .required(),
-      slug: yup
-        .string()
-        .required()
-        .test(
-          'uniqueSlug',
-          'This SLUG is already registered.',
-          async (slug) =>
-          {
-            const res = await fetch(`/api/${tenantId}/links?slug=${slug}`, { method: 'GET', headers: { 'Content-Type': 'application/json' }, });
-            const data = await res.json();
-
-            return !!data?.message;
-          }),
-      destination: yup
-        .string()
-        .required(),
-      appLink: yup
-        .string()
-        .required(),
-    }).required();
-  const { register, handleSubmit, formState: { errors } } = useForm<NewLinkForm>({ resolver: yupResolver(schema) });
+  const { register, handleSubmit, setValue, formState: { errors } } = useForm<NewLinkForm>({ resolver: yupResolver(schema) });
   const onSubmit: SubmitHandler<NewLinkForm> = async (inputs) =>
   {
     const res = await executePost({ url: `/api/${tenantId}/links`, data: inputs });
@@ -60,6 +66,13 @@ const CreateLink = () =>
       router.push(`/app/${tenantId}/links`);
     }
   }
+
+  useEffect(
+    () =>
+    {
+      setValue('tenantId', String(tenantId));
+    },
+    [tenantId, setValue]);
 
   return (
     <>
