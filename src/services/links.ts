@@ -114,6 +114,11 @@ const findPaginated = async (tenantId: string, cursor?: string | string[], take?
   const linksWithClicks = await prisma
     .click
     .groupBy({
+      where: {
+        link: {
+          tenantId
+        }
+      },
       by: ['linkId'],
       _count: {
         id: true
@@ -123,7 +128,7 @@ const findPaginated = async (tenantId: string, cursor?: string | string[], take?
   const linksWithAnalitycs = links
     .map(link =>
     {
-      const clicks = linksWithClicks.find(lnk => lnk.linkId = link.id)?._count.id || 0;
+      const clicks = linksWithClicks.find(lnk => lnk.linkId === link.id)?._count.id || 0;
       return {
         ...link,
         clicks
@@ -198,7 +203,6 @@ const findAnalitycsPaginated = async (linkId: string, cursor?: string | string[]
         take: takeNumber
       });
   }
-
 
   return {
     items: clicks,
