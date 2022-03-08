@@ -4,7 +4,7 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from "yup";
 import { useRouter } from 'next/router';
-import { executePost } from '@lib/fetch';
+import { executePatch } from '@lib/fetch';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useHttpGet } from 'src/hooks/api';
@@ -26,7 +26,7 @@ const schema = yup.object(
     publicName: yup.string().required(),
     slug: yup.string().required(),
     destination: yup.string().required(),
-    appLink: yup.string().required(),
+    // appLink: yup.string().required(),
   }).required();
 
 const EditLink = () =>
@@ -38,9 +38,9 @@ const EditLink = () =>
   const linkId = router?.query?.linkid ?? null;
   const onSubmit: SubmitHandler<NewLinkForm> = async (inputs) =>
   {
-    await executePost({ url: `/api/${tenantId}/links`, data: inputs });
-    // router.push(`/app/${tenantId}/links`);
-    setSuccess(true);
+    setSuccess(false);
+    const res = await executePatch({ url: `/api/${tenantId}/links/${linkId}`, data: inputs });
+    router.push(`/app/${tenantId}/links`);
   }
   const { data } = useHttpGet<LinkEntity>(tenantId && linkId && `/api/${tenantId}/links/${linkId}`);
   useEffect(

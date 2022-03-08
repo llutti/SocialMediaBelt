@@ -4,8 +4,8 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import { prisma } from "@lib/prisma";
 import { getSession } from 'next-auth/react';
 import { checkTenantPermition } from 'src/services/users';
-import { findLinkById } from '@services/links';
-import { Link } from '@prisma/client';
+import { findLinkById, update } from '@services/links';
+import { Link, Prisma } from '@prisma/client';
 
 interface SessionError
 {
@@ -64,6 +64,41 @@ export default async function handler(
         .status(200)
         .json({ success: true, id: linkId });
     }
+
+    if (req.method === 'PATCH')
+    {
+      const link = await prisma.link.findFirst({
+        where: {
+          id: linkId,
+          tenantId
+        }
+      });
+
+      if (!link)
+      {
+        return res
+          .status(404)
+          .json({ message: 'Needs to be auth' });
+      }
+
+      const linkData: Prisma.LinkUpdateInput = {
+        name: req.body.name,
+        publicName: req.body.publicName,
+        slug: req.body.slug,
+        destination: req.body.destination,
+        tenant: {
+          connect: {
+            id: tenantId
+          }
+        }
+      }
+      const savedLink = await update(linkId, linkData);
+
+      return res
+        .status(200)
+        .json(savedLink);
+    }
+
     if (req.method === 'GET')
     {
       const link = await findLinkById(linkId);

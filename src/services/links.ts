@@ -24,6 +24,17 @@ const save = async (linkData: Prisma.LinkCreateInput): Promise<Link> =>
   return savedLink;
 }
 
+const update = async (id: string, linkData: Prisma.LinkUpdateInput): Promise<Link> =>
+{
+  const savedLink = await prisma.link
+    .update({
+      where: { id },
+      data: linkData
+    });
+
+  return savedLink;
+}
+
 
 const findPaginated = async (tenantId: string, cursor?: string | string[], take?: string | string[]): Promise<LinkPaginationWapper> =>
 {
@@ -213,4 +224,4 @@ const findLinkBySlug = async (tenantId: string, slug: string) =>
 }
 
 export type { LinkPaginationWapper, ClickPaginationWapper }
-export { findPaginated, findAnalitycsPaginated, findLinkBySlug, findLinkById, save }
+export { findPaginated, findAnalitycsPaginated, findLinkBySlug, findLinkById, save, update }
