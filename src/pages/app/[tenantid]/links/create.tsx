@@ -1,12 +1,14 @@
+import { useRouter } from 'next/router';
+import Link from 'next/link';
+
+import { SubmitHandler, useForm } from 'react-hook-form';
+import * as yup from "yup";
+import { yupResolver } from '@hookform/resolvers/yup';
+
 import Heading1 from '@components/Heading1';
 import Heading2 from '@components/Heading2';
-import { SubmitHandler, useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from "yup";
-import { useRouter } from 'next/router';
-import { executePost } from '@lib/fetch';
-import Link from 'next/link';
 import { Input } from '@components/Input';
+import { executePost } from '@lib/fetch';
 
 interface NewLinkForm
 {
@@ -53,7 +55,6 @@ const CreateLink = () =>
   const onSubmit: SubmitHandler<NewLinkForm> = async (inputs) =>
   {
     const res = await executePost({ url: `/api/${tenantId}/links`, data: inputs });
-    //console.log(res);
     if (!res?.message)
     {
       router.push(`/app/${tenantId}/links`);
@@ -62,7 +63,6 @@ const CreateLink = () =>
 
   return (
     <>
-      {/* <pre>{JSON.stringify(data, null, 2)}</pre> */}
       <div className="grid grid-cols-1 md:grid-cols-2">
         <div>
           <Heading1>Gerenciador de Links</Heading1>

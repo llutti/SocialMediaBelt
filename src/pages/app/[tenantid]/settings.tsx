@@ -1,15 +1,16 @@
-import Heading2 from '@components/Heading2';
-import { SubmitHandler, useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from "yup";
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 
-import { executePost } from '@lib/fetch';
+import { SubmitHandler, useForm } from 'react-hook-form';
 import { mutate } from 'swr';
-import { useHttpGet } from 'src/hooks/api';
-import { useEffect, useState } from 'react';
+import * as yup from "yup";
+import { yupResolver } from '@hookform/resolvers/yup';
 import { Tenant } from '@prisma/client';
+
 import { Alert } from '@components/Alert';
+import Heading2 from '@components/Heading2';
+import { executePost } from '@lib/fetch';
+import { useHttpGet } from '@hooks/api';
 
 interface TenantSettingsForm
 {

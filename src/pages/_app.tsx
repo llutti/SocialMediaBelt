@@ -3,10 +3,9 @@ import { useRouter } from 'next/router';
 
 import { SessionProvider } from "next-auth/react"
 
-import { LayoutApp, LayoutPublic, LayoutTenant } from '@components/Layout'
+import { LayoutApp, LayoutEmpty, LayoutPublic, LayoutTenant } from '@components/Layout'
 
 import '../styles/globals.css'
-import LayoutEmpty from '@components/Layout/LayoutEmpty';
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps)
 {

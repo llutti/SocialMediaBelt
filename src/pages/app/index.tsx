@@ -1,13 +1,13 @@
-import { Tenant } from '@prisma/client';
-import { useSession } from 'next-auth/react';
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image'
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
-import { useHttpGet } from 'src/hooks/api';
 
-// @ts-ignore
-const fetcher = (...args: any[]) => fetch(...args).then(res => res.json())
+import { useSession } from 'next-auth/react';
+
+import { useHttpGet } from '@hooks/api';
+import { Tenant } from '@prisma/client';
+
 
 const IndexApp = () =>
 {

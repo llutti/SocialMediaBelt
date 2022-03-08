@@ -1,16 +1,16 @@
-import Heading1 from '@components/Heading1';
-import Heading2 from '@components/Heading2';
-import { SubmitHandler, useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from "yup";
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import { executePatch } from '@lib/fetch';
-import Link from 'next/link';
-import { useEffect, useState } from 'react';
-import { useHttpGet } from 'src/hooks/api';
-import { Link as LinkEntity } from '@prisma/client';
+
+import { SubmitHandler, useForm } from 'react-hook-form';
+import * as yup from "yup";
+import { yupResolver } from '@hookform/resolvers/yup';
+
 import { Alert } from '@components/Alert';
+import Heading2 from '@components/Heading2';
 import { Input } from '@components/Input';
+import { executePatch } from '@lib/fetch';
+import { useHttpGet } from '@hooks/api';
+import { Link as LinkEntity } from '@prisma/client';
 
 interface NewLinkForm
 {
@@ -33,8 +33,8 @@ const EditLink = () =>
       publicName: yup.string().required(),
       slug: yup.string().required()
         .test(
-          'uniqueSlug',  // Name
-          'This SLUG is already registered.',               // Msg
+          'uniqueSlug',
+          'This SLUG is already registered.',
           async (slug) =>
           {
             const res = await fetch(`/api/${tenantId}/links?slug=${slug}`, { method: 'GET', headers: { 'Content-Type': 'application/json' }, });
@@ -51,7 +51,7 @@ const EditLink = () =>
             return result;
           }),
       destination: yup.string().required(),
-      // appLink: yup.string().required(),
+      appLink: yup.string() //.required(),
     }).required();
   const { register, handleSubmit, formState: { errors }, setValue } = useForm<NewLinkForm>({ resolver: yupResolver(schema) });
   const onSubmit: SubmitHandler<NewLinkForm> = async (inputs) =>

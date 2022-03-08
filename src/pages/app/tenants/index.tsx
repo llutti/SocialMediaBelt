@@ -5,10 +5,10 @@ import { useRouter } from 'next/router';
 
 import { Tenant } from '@prisma/client';
 
-import Heading1 from '@components/Heading1';
-import { useHttpGet } from 'src/hooks/api';
-import { executeDelete } from '@lib/fetch';
 import { Alert } from '@components/Alert';
+import Heading1 from '@components/Heading1';
+import { useHttpGet } from '@hooks/api';
+import { executeDelete } from '@lib/fetch';
 
 const Tenants = () =>
 {
@@ -34,10 +34,10 @@ const Tenants = () =>
       }
     }
 
-  }, [tenants, router])
+  }, [tenants, router]);
+
   return (
     <>
-      {/* <pre>{JSON.stringify(data, null, 2)}</pre> */}
       <div className="grid grid-cols-1 md:grid-cols-2">
         <div>
           <Heading1>Minhas Contas</Heading1>

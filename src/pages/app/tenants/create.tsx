@@ -1,8 +1,10 @@
-import Heading2 from '@components/Heading2';
-import { SubmitHandler, useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from "yup";
 import { useRouter } from 'next/router';
+
+import { SubmitHandler, useForm } from 'react-hook-form';
+import * as yup from "yup";
+import { yupResolver } from '@hookform/resolvers/yup';
+
+import Heading2 from '@components/Heading2';
 import { executePost } from '@lib/fetch';
 
 interface NewTenantForm
@@ -31,8 +33,6 @@ const CreateTenant = () =>
 
   return (
     <>
-      {/* <pre>{JSON.stringify(data, null, 2)}</pre> */}
-
       <form onSubmit={handleSubmit(onSubmit)} className="container max-w-2xl mx-auto shadow-md md:w-3/4 mt-4">
         <div className="p-4 bg-gray-100 border-t-2 border-indigo-400 rounded-lg bg-opacity-5">
           <div className="max-w-sm mx-auto md:w-full md:mx-0">

@@ -3,12 +3,12 @@ import { useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 
+import { Alert } from '@components/Alert';
 import Heading1 from '@components/Heading1';
 import Heading2 from '@components/Heading2';
-import { useHttpGet } from 'src/hooks/api';
+import { useHttpGet } from '@hooks/api';
 import { executeDelete } from '@lib/fetch';
 import { LinkPaginationWapper } from '@services/links';
-import { Alert } from '@components/Alert';
 
 const Links = () =>
 {
@@ -39,7 +39,6 @@ const Links = () =>
   }, [tenantId, data, router])
   return (
     <>
-      {/* <pre>{JSON.stringify(data, null, 2)}</pre> */}
       <div className="grid grid-cols-1 md:grid-cols-2">
         <div>
           <Heading1>Gerenciador de Links</Heading1>
