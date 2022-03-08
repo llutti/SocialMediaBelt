@@ -2,7 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 
 import { getSession } from 'next-auth/react';
 import { Link, Prisma } from '@prisma/client';
-import { findPaginated, LinkPaginationWapper, save } from 'src/services/links';
+import { findLinkBySlug, findPaginated, LinkPaginationWapper, save } from 'src/services/links';
 import { checkTenantPermition } from 'src/services/users';
 
 interface SessionError
@@ -41,7 +41,15 @@ export default async function handler(
           }
         }
       }
-      const savedLink = await save(linkData);
+
+      const savedLink = await save(tenantId, linkData);
+
+      if (!savedLink)
+      {
+        return res
+          .status(404)
+          .json({ message: 'Slug invalid' });
+      }
 
       return res
         .status(200)
@@ -50,7 +58,24 @@ export default async function handler(
 
     if (req.method === 'GET')
     {
-      const { cursor, take } = req.query;
+      const { cursor, take, slug } = req.query;
+
+      if (slug)
+      {
+        const link = await findLinkBySlug(tenantId, slug as string);
+
+        if (!link)
+        {
+          return res
+            .status(404)
+            .json({ message: 'Slug invalid' });
+        }
+
+        return res
+          .status(200)
+          .json(link);
+      }
+
       const links = await findPaginated(tenantId, cursor, take);
 
       return res

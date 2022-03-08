@@ -92,7 +92,15 @@ export default async function handler(
           }
         }
       }
-      const savedLink = await update(linkId, linkData);
+
+      const savedLink = await update(tenantId, linkId, linkData);
+
+      if (!savedLink)
+      {
+        return res
+          .status(404)
+          .json({ message: 'Slug invalid' });
+      }
 
       return res
         .status(200)

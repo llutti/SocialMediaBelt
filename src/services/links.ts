@@ -7,6 +7,7 @@ interface LinkPaginationWapper
   nextCursor?: string,
   prevCursor?: string,
 }
+
 interface ClickPaginationWapper
 {
   items: Click[],
@@ -14,8 +15,14 @@ interface ClickPaginationWapper
   prevCursor?: string,
 }
 
-const save = async (linkData: Prisma.LinkCreateInput): Promise<Link> =>
+const save = async (tenantId: string, linkData: Prisma.LinkCreateInput): Promise<Link | null> =>
 {
+  const currentLink = await findLinkBySlug(tenantId, linkData.slug as string);
+  if (currentLink !== null)
+  {
+    return null;
+  }
+
   const savedLink = await prisma.link
     .create({
       data: linkData
@@ -24,8 +31,15 @@ const save = async (linkData: Prisma.LinkCreateInput): Promise<Link> =>
   return savedLink;
 }
 
-const update = async (id: string, linkData: Prisma.LinkUpdateInput): Promise<Link> =>
+const update = async (tenantId: string, id: string, linkData: Prisma.LinkUpdateInput): Promise<Link | null> =>
 {
+  const currentLink = await findLinkBySlug(tenantId, linkData.slug as string);
+  if ((currentLink !== null)
+    && (currentLink?.id !== id))
+  {
+    return null;
+  }
+
   const savedLink = await prisma.link
     .update({
       where: { id },
@@ -34,7 +48,6 @@ const update = async (id: string, linkData: Prisma.LinkUpdateInput): Promise<Lin
 
   return savedLink;
 }
-
 
 const findPaginated = async (tenantId: string, cursor?: string | string[], take?: string | string[]): Promise<LinkPaginationWapper> =>
 {
@@ -210,10 +223,10 @@ const findLinkBySlug = async (tenantId: string, slug: string) =>
 {
   const link = await prisma.link
     .findFirst({
-      select: {
-        id: true,
-        destination: true,
-      },
+      // select: {
+      //   id: true,
+      //   destination: true,
+      // },
       where: {
         tenantId,
         slug

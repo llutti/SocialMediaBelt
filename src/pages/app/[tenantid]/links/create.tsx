@@ -6,6 +6,7 @@ import * as yup from "yup";
 import { useRouter } from 'next/router';
 import { executePost } from '@lib/fetch';
 import Link from 'next/link';
+import { Input } from '@components/Input';
 
 interface NewLinkForm
 {
@@ -16,23 +17,47 @@ interface NewLinkForm
   appLink: string;
 }
 
-const schema = yup.object(
-  {
-    name: yup.string().required(),
-    publicName: yup.string().required(),
-    slug: yup.string().required(),
-    destination: yup.string().required(),
-    appLink: yup.string().required(),
-  }).required();
-
 const CreateLink = () =>
 {
   const router = useRouter();
+  const tenantId = router?.query?.tenantid ?? null;
+  const schema = yup.object(
+    {
+      name: yup
+        .string()
+        .required(),
+      publicName: yup
+        .string()
+        .required(),
+      slug: yup
+        .string()
+        .required()
+        .test(
+          'uniqueSlug',
+          'This SLUG is already registered.',
+          async (slug) =>
+          {
+            const res = await fetch(`/api/${tenantId}/links?slug=${slug}`, { method: 'GET', headers: { 'Content-Type': 'application/json' }, });
+            const data = await res.json();
+
+            return !!data?.message;
+          }),
+      destination: yup
+        .string()
+        .required(),
+      appLink: yup
+        .string()
+        .required(),
+    }).required();
   const { register, handleSubmit, formState: { errors } } = useForm<NewLinkForm>({ resolver: yupResolver(schema) });
   const onSubmit: SubmitHandler<NewLinkForm> = async (inputs) =>
   {
-    await executePost({ url: `/api/${router?.query?.tenantid}/links`, data: inputs });
-    router.push(`/app/${router?.query?.tenantid}/links`);
+    const res = await executePost({ url: `/api/${tenantId}/links`, data: inputs });
+    //console.log(res);
+    if (!res?.message)
+    {
+      router.push(`/app/${tenantId}/links`);
+    }
   }
 
   return (
@@ -73,56 +98,44 @@ const CreateLink = () =>
             <h2 className="max-w-sm mx-auto md:w-1/3">Identificação</h2>
             <div className="max-w-sm mx-auto md:w-2/3 space-y-5">
 
-              <div className=" relative ">
-                <input
-                  type="text"
-                  className=" rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
-                  placeholder="Nome do Link"
-                  {...register('name')}
-                />
-              </div>
-              <div className=" relative ">
-                <input
-                  type="text"
-                  className=" rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
-                  placeholder="Nome Público"
-                  {...register('publicName')}
-                />
-              </div>
-              <div className=" relative ">
-                <input
-                  type="text"
-                  className=" rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
-                  placeholder="Identificador (slug)"
-                  {...register('slug')}
-                />
-              </div>
+              <Input
+                label='Nome do Link'
+                placeholder='Nome do Link'
+                {...register('name')}
+                erros={errors?.name}
+              />
+              <Input
+                label='Nome Público'
+                placeholder='Nome Público'
+                {...register('publicName')}
+                erros={errors?.publicName}
+              />
+              <Input
+                label='Identificador (slug)'
+                placeholder='Identificador (slug)'
+                {...register('slug')}
+                erros={errors?.slug}
+              />
+
             </div>
           </div>
           <hr />
           <div className="items-center w-full p-4 space-y-4 text-gray-500 md:inline-flex md:space-y-0">
             <h2 className="max-w-sm mx-auto md:w-1/3">Destino</h2>
             <div className="max-w-sm mx-auto space-y-5 md:w-2/3">
-              <div>
-                <div className=" relative ">
-                  <input
-                    type="text"
-                    className=" rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
-                    placeholder="https://"
-                    {...register('destination')}
-                  />
-                </div>
-              </div>
-              <div>
-                <div className=" relative ">
-                  <input
-                    type="text"
-                    className=" rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
-                    placeholder="TBD link interno para app"
-                    {...register('appLink')}
-                  />
-                </div>
-              </div>
+              <Input
+                label='Link Externo'
+                placeholder='https://'
+                {...register('destination')}
+                erros={errors?.destination}
+              />
+
+              <Input
+                label='Link Interno'
+                placeholder='TBD link interno para app'
+                {...register('appLink')}
+                erros={errors?.appLink}
+              />
             </div>
           </div>
           <hr />
