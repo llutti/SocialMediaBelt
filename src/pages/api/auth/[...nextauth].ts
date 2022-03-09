@@ -3,6 +3,7 @@ import { PrismaAdapter } from '@next-auth/prisma-adapter';
 import GithubProvider from "next-auth/providers/github"
 
 import { prisma } from "@lib/prisma";
+import generate from 'project-name-generator';
 
 export default NextAuth({
   adapter: PrismaAdapter(prisma),
@@ -51,11 +52,13 @@ export default NextAuth({
 
         if (tenant === null)
         {
+          const newTenantName = generate().dashed;
+
           await prisma.tenant.create({
             data: {
-              name: 'Meu Tenant',
+              name: newTenantName,
               image: '',
-              slug: 'meutenant',
+              slug: newTenantName,
               plan: 'free',
               users: {
                 create: [
