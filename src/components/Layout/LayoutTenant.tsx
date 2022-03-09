@@ -9,7 +9,6 @@ const LayoutTenant = ({ children }: Props) =>
 {
   return (
     <>
-      <h1>Layout Tenant</h1>
       {children}
     </>
   )
