@@ -4,10 +4,15 @@ interface IPost<T>
   data: T;
 }
 
-interface IPut<T>
+interface IPatch<T>
 {
   url: string;
   data: T;
+}
+
+interface IDelete
+{
+  url: string;
 }
 
 const executePost = async <T>({ url, data }: IPost<T>) =>
@@ -23,7 +28,7 @@ const executePost = async <T>({ url, data }: IPost<T>) =>
   return res.json();
 }
 
-const executePatch = async <T>({ url, data }: IPut<T>) =>
+const executePatch = async <T>({ url, data }: IPatch<T>) =>
 {
   const res = await fetch(url, {
     method: 'PATCH',
@@ -34,11 +39,6 @@ const executePatch = async <T>({ url, data }: IPut<T>) =>
   });
 
   return res.json();
-}
-
-interface IDelete
-{
-  url: string;
 }
 
 const executeDelete = async ({ url }: IDelete) =>
