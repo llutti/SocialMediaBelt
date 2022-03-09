@@ -240,5 +240,27 @@ const findLinkBySlug = async (tenantId: string, slug: string) =>
   return link;
 }
 
-export type { LinkPaginationWapper, ClickPaginationWapper }
-export { findPaginated, findAnalitycsPaginated, findLinkBySlug, findLinkById, save, update }
+interface LinkPublicWrapper
+{
+  id: string;
+  publicName: string;
+  destination: string;
+}
+
+const getPublicLinks = async (tenantId: string): Promise<LinkPublicWrapper[]> =>
+{
+  const links = await prisma
+    .link
+    .findMany({
+      select: {
+        id: true,
+        publicName: true,
+        destination: true,
+      },
+      where: { tenantId }
+    });
+  return links;
+}
+
+export type { LinkPaginationWapper, ClickPaginationWapper, LinkPublicWrapper as LinkPublicType }
+export { findPaginated, findAnalitycsPaginated, findLinkBySlug, findLinkById, getPublicLinks, save, update }
