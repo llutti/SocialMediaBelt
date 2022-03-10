@@ -67,8 +67,9 @@ model Tenant {
 
   createdAt DateTime @default(now())
 
-  users UsersOnTenants[]
-  links Link[]
+  users         UsersOnTenants[]
+  links         Link[]
+  customDomains CustomDomain[]
 }
 
 model UsersOnTenants {
@@ -101,4 +102,13 @@ model Click {
   metadata  String
   linkId    String
   link      Link     @relation(fields: [linkId], references: [id])
+}
+
+model CustomDomain {
+  id         String   @id @default(cuid())
+  createdAt  DateTime @default(now())
+  active     Boolean
+  domainName String
+  tenantId   String
+  tenant     Tenant   @relation(fields: [tenantId], references: [id])
 }
