@@ -1,7 +1,7 @@
 import { GetServerSideProps, NextPage } from 'next';
 import { prisma } from "@lib/prisma";
 import { findLinkBySlug } from 'src/services/links';
-import { findTenantBySlug } from 'src/services/tenants';
+import { findTenantByDomain, findTenantBySlug } from 'src/services/tenants';
 
 const GoPage: NextPage = (props) =>
 {
@@ -21,6 +21,12 @@ export const getServerSideProps: GetServerSideProps = async (context) =>
   if (slug?.indexOf('.') === -1)
   {
     tenant = await findTenantBySlug(String(context?.params?.slug));
+  }
+
+  if (!tenant)
+  {
+    tenant = await findTenantByDomain(String(context?.params?.slug));
+
     if (!tenant)
     {
       return {
@@ -30,14 +36,13 @@ export const getServerSideProps: GetServerSideProps = async (context) =>
   }
 
   const link = await findLinkBySlug(String(tenant?.id), String(context?.params?.link));
+
   if (!link)
   {
     return {
       notFound: true,
     }
   }
-
-  // Counting Clicks
 
   await prisma
     .click

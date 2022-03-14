@@ -44,7 +44,7 @@ const findTenantBySlug = async (slug: string) =>
     .findFirst({
       select: {
         id: true,
-        name:true,
+        name: true,
       },
       where: {
         slug
@@ -54,4 +54,24 @@ const findTenantBySlug = async (slug: string) =>
   return tenant;
 }
 
-export { create, findTenantBySlug, findTenantById, save }
+const findTenantByDomain = async (domainName: string) =>
+{
+  const domain = await prisma.customDomain
+    .findFirst({
+      select: {
+        tenant: {
+          select: {
+            id: true,
+            name: true,
+          }
+        }
+      },
+      where: {
+        domainName
+      }
+    });
+
+  return domain?.tenant || null;
+}
+
+export { create, findTenantBySlug, findTenantById, findTenantByDomain, save }

@@ -1,9 +1,9 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 
 import { getSession } from 'next-auth/react';
-import { Link, Prisma } from '@prisma/client';
-import { findLinkBySlug, findPaginated, LinkPaginationWapper, save } from 'src/services/links';
+import { CustomDomain , Prisma } from '@prisma/client';
 import { checkTenantPermition } from 'src/services/users';
+import { create, findAll, findDomainByDomainName  } from '@services/domains';
 
 interface SessionError
 {
@@ -12,7 +12,7 @@ interface SessionError
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<Link | LinkPaginationWapper | SessionError | null>
+  res: NextApiResponse<CustomDomain | CustomDomain[] | SessionError | null>
 )
 {
   const session = await getSession({ req });
@@ -30,11 +30,9 @@ export default async function handler(
 
     if (req.method === 'POST')
     {
-      const linkData: Prisma.LinkCreateInput = {
-        name: req.body.name,
-        publicName: req.body.publicName,
-        slug: req.body.slug,
-        destination: req.body.destination,
+      const domainData: Prisma.CustomDomainCreateInput = {
+        domainName: req.body.domainName,
+        active: true,
         tenant: {
           connect: {
             id: tenantId
@@ -42,49 +40,45 @@ export default async function handler(
         }
       }
 
-      const savedLink = await save(tenantId, linkData);
+      const saved = await create(tenantId, domainData);
 
-      if (!savedLink)
+      if (!saved)
       {
         return res
           .status(404)
-          .json({ message: 'Slug invalid' });
+          .json({ message: 'Domain invalid' });
       }
 
       return res
         .status(200)
-        .json(savedLink);
+        .json(saved);
     }
 
     if (req.method === 'GET')
     {
-      const { cursor, take, slug } = req.query;
+      const { cursor, take, domainName } = req.query;
 
-      if (slug)
+      if (domainName)
       {
-        const link = await findLinkBySlug(tenantId, slug as string);
+        const domains = await findDomainByDomainName(tenantId, domainName as string);
 
-        if (!link)
+        if (!domains)
         {
           return res
             .status(404)
-            .json({ message: 'Domain not found' });
+            .json({ message: 'DomainName invalid' });
         }
 
         return res
           .status(200)
-          .json(link);
+          .json(domains);
       }
 
-      const links = await findPaginated(tenantId, cursor, take);
+      const domains = await findAll(tenantId);
 
       return res
         .status(200)
-        .json({
-          items: links.items,
-          nextCursor: links.nextCursor,
-          prevCursor: links.prevCursor,
-        });
+        .json(domains);
     }
   }
 
