@@ -81,4 +81,4 @@ const findAll = async (tenantId: string): Promise<CustomDomain[]> =>
   return domains || [];
 }
 
-export { create, findAll, findDomainById, findDomainByDomainName, update as save }
+export { create, findAll, findDomainById, findDomainByDomainName, update}
